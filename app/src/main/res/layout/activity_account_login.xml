@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="25dp"
+    android:clickable="true"
+    android:focusable="true"
+    tools:context=".AccountLoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="25dp"
+        android:textSize="28dp" />
+
+    <EditText
+        android:id="@+id/txtStudentId"
+        android:hint="Student Id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:textSize="20dp"
+        android:singleLine="true"
+        android:nextFocusForward="@+id/txtPassword"/>
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:hint="Password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:textSize="20dp"
+        android:inputType="textPassword"
+        android:singleLine="true"
+        android:nextFocusForward="@+id/btnLogin"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:textSize="18dp"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="75dp"/>
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_columnWeight="1"
+        android:textSize="18dp"
+        android:text="Register"
+        android:textAllCaps="false"
+        android:layout_gravity="center"
+        android:layout_marginLeft="75dp"
+        android:layout_marginRight="75dp"
+        android:layout_marginTop="10dp"/>
+
+</LinearLayout>
