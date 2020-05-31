@@ -30,6 +30,13 @@ public class AccountLoginActivity extends AppCompatActivity {
         txtStudentId = findViewById(R.id.txtStudentId);
         txtPassword = findViewById(R.id.txtPassword);
 
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(AccountLoginActivity.this, AccountRegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final String studentId = txtStudentId.getText().toString();
