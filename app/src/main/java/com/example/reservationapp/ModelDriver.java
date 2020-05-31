@@ -1,12 +1,12 @@
 package com.example.reservationapp;
 
-public class DriverModel {
+public class ModelDriver {
     private String id, firstName, lastName;
     private int capacity;
 
-    public DriverModel() { }
+    public ModelDriver() { }
 
-    public DriverModel(String id, String firstName, String lastName, int capacity) {
+    public ModelDriver(String id, String firstName, String lastName, int capacity) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

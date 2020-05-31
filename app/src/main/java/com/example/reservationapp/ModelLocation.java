@@ -1,14 +1,14 @@
 package com.example.reservationapp;
 
-public class TrackingModel {
+public class ModelLocation {
     private String id, address, altitude, speed, destination, status;
     private float accuracy;
     private double latitude, longitude;
 
-    public TrackingModel() {
+    public ModelLocation() {
     }
 
-    public TrackingModel(String id, String address, String altitude, String speed, String destination, String status, float accuracy, double latitude, double longitude) {
+    public ModelLocation(String id, String address, String altitude, String speed, String destination, String status, float accuracy, double latitude, double longitude) {
         this.id = id;
         this.address = address;
         this.altitude = altitude;

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,12 +22,13 @@ public class MainActivity extends AppCompatActivity {
     Button btnEditAccount, btnSchedules;
     ListView lstShuttles;
 
+    DatabaseReference refRoot;
     DatabaseReference refDrivers;
-    DatabaseReference refTracking;
+    DatabaseReference refLocations;
     DatabaseReference refDestinations;
 
-    FirebaseListOptions<TrackingModel> options;
-    TrackingModel[] shuttles;
+    FirebaseListOptions<ModelLocation> options;
+    ModelLocation[] shuttles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +41,10 @@ public class MainActivity extends AppCompatActivity {
         lstShuttles = findViewById(R.id.lstShuttles);
 
         //gets references to database
-        refTracking = FirebaseDatabase.getInstance().getReference("Tracking");
-        refDrivers = FirebaseDatabase.getInstance().getReference("Drivers");
-        refDestinations = FirebaseDatabase.getInstance().getReference("Destinations");
+        refRoot = FirebaseDatabase.getInstance().getReference();
+        refLocations = refRoot.child("Tracking");
+        refDrivers = refRoot.child("Drivers");
+        refDestinations = refRoot.child("Destinations");
 
         updateList();
 
@@ -51,19 +52,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateList(){
         //listens for changes in tracking table
-        refTracking.addValueEventListener(new ValueEventListener() {
+        refLocations.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 String count  = String.valueOf(dataSnapshot.getChildrenCount());
-                shuttles = new TrackingModel[ Integer.valueOf(count)];
+                shuttles = new ModelLocation[ Integer.valueOf(count)];
 
                 //build options for the firebase list adapter
-                options = new FirebaseListOptions.Builder<TrackingModel>().setQuery(refTracking, TrackingModel.class).setLayout(R.layout.list_item_shuttle).build();
+                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations, ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
 
-                FirebaseListAdapter<TrackingModel> firebaseListAdapter = new FirebaseListAdapter<TrackingModel>(options) {
+                FirebaseListAdapter<ModelLocation> firebaseListAdapter = new FirebaseListAdapter<ModelLocation>(options) {
                     @Override
-                    protected void populateView(@NonNull View v, @NonNull TrackingModel model, int position) {
+                    protected void populateView(@NonNull View v, @NonNull ModelLocation model, int position) {
 
                         DatabaseReference itemRef = getRef(position);
                         //gets info from driver and destination table using the linked IDs
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         txtStatus.setText(String.valueOf(model.getStatus()));
 
                         //store ids in array to pass in shuttle activity
-                        shuttles[position] = new TrackingModel();
+                        shuttles[position] = new ModelLocation();
                         shuttles[position].setId(itemRef.getKey());
 
                     }
