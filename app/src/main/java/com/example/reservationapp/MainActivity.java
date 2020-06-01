@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseListOptions<ModelLocation> options;
     ModelLocation[] shuttles;
 
+    String studentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         btnEditAccount = findViewById(R.id.btnEditAccount);
         btnSchedules = findViewById(R.id.btnSchedules);
         lstShuttles = findViewById(R.id.lstShuttles);
+
+        studentId = getIntent().getStringExtra("studentId");
 
         //gets references to database
         refRoot = FirebaseDatabase.getInstance().getReference();
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(MainActivity.this, ShuttleActivity.class);
+                intent.putExtra("studentId", studentId);
                 intent.putExtra("id", shuttles[i].getId());
                 intent.putExtra("status", shuttles[i].getStatus());
                 intent.putExtra("destination", shuttles[i].getDestination());
@@ -65,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
                 String driverName = txtDriver.getText().toString();
                 intent.putExtra("driverName", driverName);
 
+                startActivity(intent);
+            }
+        });
+
+        btnEditAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AccountEditActivity.class);
+                intent.putExtra("studentId", studentId);
                 startActivity(intent);
             }
         });
