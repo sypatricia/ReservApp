@@ -12,6 +12,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -166,8 +168,15 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                 markerDestination.remove();
             }
 
+            BitmapDescriptor descriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+
+            if(status.equals("Waiting")){
+                descriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+            }
+
             //add marker for shuttle location
             MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.icon(descriptor);
             markerOptions.position(new LatLng(locationLatitude,locationLongitude));
             markerOptions.title(driverName);
             gMap.clear();
