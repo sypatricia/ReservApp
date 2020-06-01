@@ -3,8 +3,10 @@ package com.example.reservationapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,6 +50,25 @@ public class MainActivity extends AppCompatActivity {
 
         updateList();
 
+        //triggered whenever an item in the list is clicked
+        lstShuttles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, ShuttleActivity.class);
+                intent.putExtra("id", shuttles[i].getId());
+                intent.putExtra("status", shuttles[i].getStatus());
+                intent.putExtra("destination", shuttles[i].getDestination());
+                intent.putExtra("locationLatitude", shuttles[i].getLatitude());
+                intent.putExtra("locationLatitude", shuttles[i].getLatitude());
+                intent.putExtra("locationLongitude", shuttles[i].getLongitude());
+                TextView txtDriver = view.findViewById(R.id.txtDriverName);
+                String driverName = txtDriver.getText().toString();
+                intent.putExtra("driverName", driverName);
+
+                startActivity(intent);
+            }
+        });
+
     }//end of on create
 
     public void updateList(){
@@ -89,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
-                        //sets the destination name in the list item using retrieved driver info
+                        //sets the destination name in the list item using retrieved destination info
                         destination.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -107,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
                         //store ids in array to pass in shuttle activity
                         shuttles[position] = new ModelLocation();
                         shuttles[position].setId(itemRef.getKey());
+                        shuttles[position].setStatus(model.getStatus());
+                        shuttles[position].setLatitude(model.getLatitude());
+                        shuttles[position].setLongitude(model.getLongitude());
+                        shuttles[position].setDestination(model.getDestination());
 
                     }
                 };
