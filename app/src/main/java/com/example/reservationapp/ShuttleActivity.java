@@ -181,6 +181,11 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 reservations = (int)dataSnapshot.getChildrenCount();
+                if(!dataSnapshot.hasChild(studentId)){
+                    reserved = false;
+                    reservedInOther = false;
+                    refStudent.child("reserved").removeValue();
+                }
                 updateInfo();
             }
 
@@ -237,8 +242,10 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         txtDestination.setText("Destination: " + destinationName);
 
         //if shuttle is waiting and cap is not full
-        if(status.equals("Waiting") && reservations < capacity)
+        if(status.equals("Waiting") && reservations < capacity){
             btnReserve.setEnabled(true);
+            btnBack.setEnabled(true);
+        }
 
         if(!reserved){//if student is not reserved
             btnReserve.setText("Reserve Seat");
