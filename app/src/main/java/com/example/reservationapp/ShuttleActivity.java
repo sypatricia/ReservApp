@@ -236,10 +236,11 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         txtCapacity.setText(reservations + "/" + capacity);
         txtDestination.setText("Destination: " + destinationName);
 
+        //if shuttle is waiting and cap is not full
         if(status.equals("Waiting") && reservations < capacity)
             btnReserve.setEnabled(true);
 
-        if(!reserved){
+        if(!reserved){//if student is not reserved
             btnReserve.setText("Reserve Seat");
             btnReserve.setEnabled(true);
             btnBack.setEnabled(true);
@@ -249,7 +250,8 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             btnBack.setEnabled(false);
             btnReserve.setText("Cancel Reservation");
             txtReserved.setText("Reserved");
-            if(reservedInOther){
+
+            if(reservedInOther){//if student is reserved in a different shuttle
                 btnReserve.setText("Reserve Seat");
                 txtReserved.setText("");
                 btnReserve.setEnabled(false);
@@ -257,6 +259,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
 
+        //if shuttle isnt waiting or cap is full
         if(!status.equals("Waiting") || reservations >= capacity){
             btnReserve.setEnabled(false);
             btnReserve.setText("In Transit");

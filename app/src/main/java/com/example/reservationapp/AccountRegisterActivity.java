@@ -24,6 +24,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_register);
 
+        //link ui elements
         txtStudentId = findViewById(R.id.txtStudentId);
         txtFirstName = findViewById(R.id.txtFirstName);
         txtLastName = findViewById(R.id.txtLastName);
@@ -34,6 +35,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                //get values from ui elements
                 final String studentId = txtStudentId.getText().toString();
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
