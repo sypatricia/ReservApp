@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,7 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btnEditAccount, btnSchedules;
+    Button btnEditAccount, btnSchedules, btnPickUps;
     ListView lstShuttles;
 
     DatabaseReference refRoot;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         //hook up view fields
         btnEditAccount = findViewById(R.id.btnEditAccount);
         btnSchedules = findViewById(R.id.btnSchedules);
+        btnPickUps = findViewById(R.id.btnPickUps);
         lstShuttles = findViewById(R.id.lstShuttles);
 
         studentId = getIntent().getStringExtra("studentId");
@@ -70,6 +72,14 @@ public class MainActivity extends AppCompatActivity {
                 String driverName = txtDriver.getText().toString();
                 intent.putExtra("driverName", driverName);
 
+                startActivity(intent);
+            }
+        });
+
+        btnPickUps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, PickUpsActivity.class);
                 startActivity(intent);
             }
         });

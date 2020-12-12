@@ -46,6 +46,18 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btnPickUps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:text="Pick Up Locations"
+            android:textAllCaps="false"
+            android:layout_marginLeft="75dp"
+            android:layout_marginRight="75dp"
+            android:layout_marginTop="20dp"/>
+
+        <Button
             android:id="@+id/btnSchedules"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +67,7 @@
             android:textAllCaps="false"
             android:layout_marginLeft="75dp"
             android:layout_marginRight="75dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="5dp"/>
 
             <Button
                 android:id="@+id/btnEditAccount"

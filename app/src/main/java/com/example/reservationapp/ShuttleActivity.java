@@ -2,7 +2,14 @@ package com.example.reservationapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +22,11 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +39,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +51,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener  {
+
+    public static final int DEFAULT_UPDATE_INTERVAL = 15;
+    public static final int FASTEST_UPDATE_INTERVAL = 5;
+    private static final int PEMISSIONS_FINE_LOCATION = 99;
 
     TextView txtDriverName, txtStatus, txtDestination, txtCapacity, txtReserved;
     Button btnBack, btnReserve;
@@ -61,6 +78,9 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refStudent;
     private List<Polyline> polylines = null;
 
+    FusedLocationProviderClient fusedLocationProviderClient;
+    LocationRequest locationRequest;
+    LocationCallback locationCallBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +215,19 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        locationCallBack = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                updateReserveLocation(locationResult.getLastLocation());
+            }
+        };
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
@@ -206,13 +239,15 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             public void onClick(View view) {
                 if(status.equals("Waiting")){
                     if(!reserved){//if student clicks reserve
-                        refReservations.child(studentId).setValue(studentName);
+                        refReservations.child(studentId).child("name").setValue(studentName);
                         refStudent.child("reserved").setValue(id);
+                        startLocationUpdates();
 
                         Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
 
                     }
                     else{//if student clicks cancel
+                        stopLocationUpdates();
                         refReservations.child(studentId).removeValue();
                         refStudent.child("reserved").removeValue();
 
@@ -223,7 +258,9 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
-    }
+
+        updateGPS();
+    }//end of onCreate
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -233,6 +270,78 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         gMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(locationLatitude,locationLongitude) , 16f) );
 
         updateMarkers();
+    }
+
+    private void startLocationUpdates() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+        updateGPS();
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    }
+
+    private void updateGPS(){
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(ShuttleActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            //user provided permission
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    updateReserveLocation(location);
+                }
+            });
+        }
+        else{
+            //permission not granted yet
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PEMISSIONS_FINE_LOCATION);
+            }
+        }
+    }
+
+    private void updateReserveLocation(Location location){
+        //update student in firebase database
+
+        final double latitude = location.getLatitude();
+        final double longitude = location.getLongitude();
+        final float accuracy = location.getAccuracy();
+        String altitude;
+        String speed;
+        String address;
+
+        if(location.hasAltitude()){
+            altitude = String.valueOf(location.getAltitude());
+        }
+        else altitude = "Not Available";
+
+        if(location.hasSpeed()){
+            speed = String.valueOf(location.getSpeed());
+        }
+        else speed = "Not Available";
+
+        Geocoder geocoder = new Geocoder(ShuttleActivity.this);
+
+        try{
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            address = addresses.get(0).getAddressLine(0);
+        }
+        catch (Exception e){
+            address = "Unable to get street address";
+        }
+
+        if(reserved){
+            refReservations.child(studentId).child("latitude").setValue(latitude);
+            refReservations.child(studentId).child("longitude").setValue(longitude);
+            refReservations.child(studentId).child("accuracy").setValue(accuracy);
+            refReservations.child(studentId).child("altitude").setValue(altitude);
+            refReservations.child(studentId).child("speed").setValue(speed);
+            refReservations.child(studentId).child("address").setValue(address);
+        }
+
     }
 
     public void updateInfo(){
