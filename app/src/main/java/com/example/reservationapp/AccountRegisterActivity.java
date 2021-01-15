@@ -2,10 +2,14 @@ package com.example.reservationapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.accounts.Account;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AccountRegisterActivity extends AppCompatActivity {
 
-    Button btnRegister, btnCancel;
+    Button btnRegister;
+    ImageView btnBack;
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtConfirmPass;
 
     @Override
@@ -28,10 +33,10 @@ public class AccountRegisterActivity extends AppCompatActivity {
         txtStudentId = findViewById(R.id.txtStudentId);
         txtFirstName = findViewById(R.id.txtFirstName);
         txtLastName = findViewById(R.id.txtLastName);
-        btnCancel = findViewById(R.id.btnCancel);
         btnRegister = findViewById(R.id.btnRegister);
         txtPassword = findViewById(R.id.txtPassword);
         txtConfirmPass = findViewById(R.id.txtConfirmPass);
+        btnBack = findViewById(R.id.btnBack);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -75,12 +80,15 @@ public class AccountRegisterActivity extends AppCompatActivity {
                 }
             }
         });
+                //startActivity(new Intent(AccountRegisterActivity.this, AccountLoginActivity.class));
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                finish();
+                startActivity(new Intent(AccountRegisterActivity.this, AccountLoginActivity.class));
             }
         });
+
     }
 
     void showToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }

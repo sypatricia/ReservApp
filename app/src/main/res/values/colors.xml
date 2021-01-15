@@ -3,4 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="mclblue">#00214E</color>
+    <color name="white">#FFFFFF</color>
+    <color name="inputboxgrey">#F1F1F1</color>
+    <color name="txtgrey">#847979</color>
+
+
 </resources>
