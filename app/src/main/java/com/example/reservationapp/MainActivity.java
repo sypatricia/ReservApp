@@ -93,6 +93,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnSchedules.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SchedulesActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }//end of on create
 
     public void updateList(){

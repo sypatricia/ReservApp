@@ -13,17 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".SchedulesActivity"></activity>
         <activity android:name=".AccountEditActivity" />
         <activity android:name=".ShuttleActivity" />
         <activity android:name=".AccountRegisterActivity" />
-        <activity android:name=".AccountLoginActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".PickUpsActivity" />
         <activity android:name=".SplashScreen">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
