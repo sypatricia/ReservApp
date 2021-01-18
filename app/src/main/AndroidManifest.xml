@@ -17,6 +17,7 @@
         <activity android:name=".AccountEditActivity" />
         <activity android:name=".ShuttleActivity" />
         <activity android:name=".AccountRegisterActivity" />
+        <activity android:name=".AccountLoginActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".PickUpsActivity" />
         <activity android:name=".SplashScreen">
