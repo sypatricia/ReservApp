@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="bottom"
     tools:context=".MainActivity"
     android:background="@drawable/mainbg">
 
@@ -45,7 +46,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="628dp">
+        android:layout_height="match_parent">
 
         <Button
             android:id="@+id/btnPickUps"
