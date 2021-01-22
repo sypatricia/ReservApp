@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:title="Shuttles"
-        android:id="@+id/mainActivity"
+        android:id="@+id/fragmentShuttlesList"
         android:icon="@drawable/ic_shuttles"/>
     <item android:title="Pickups"
-        android:id="@+id/pickUpsActivity"
+        android:id="@+id/fragmentPickups"
         android:icon="@drawable/ic_pickups"/>
     <item android:title="Schedules"
         android:id="@+id/schedulesActivity"
