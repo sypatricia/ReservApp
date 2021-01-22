@@ -9,7 +9,7 @@
         android:id="@+id/txtDriverName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text=""
         android:textSize="20dp"
         android:layout_marginLeft="20dp"/>
 
@@ -17,7 +17,7 @@
         android:id="@+id/txtStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text=""
         android:textSize="16dp"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="5dp"/>
@@ -26,7 +26,7 @@
         android:id="@+id/txtDestination"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text=""
         android:textSize="16dp"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="5dp"/>
