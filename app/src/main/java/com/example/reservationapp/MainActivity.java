@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnEditAccount, btnSchedules, btnPickUps;
     ListView lstShuttles;
+    Spinner spnDestination;
 
     DatabaseReference refRoot;
     DatabaseReference refDrivers;
@@ -33,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
     FirebaseListOptions<ModelLocation> options;
     ModelLocation[] shuttles;
 
+    FirebaseListOptions<ModelDestination> optionsDestination;
+    ModelDestination[] destinationArr;
+
     String studentId;
+    int destinationSelectIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         btnSchedules = findViewById(R.id.btnSchedules);
         btnPickUps = findViewById(R.id.btnPickUps);
         lstShuttles = findViewById(R.id.lstShuttles);
+        spnDestination = findViewById(R.id.spnDestination);
 
         studentId = getIntent().getStringExtra("studentId");
 
@@ -54,7 +62,58 @@ public class MainActivity extends AppCompatActivity {
         refDrivers = refRoot.child("Drivers");
         refDestinations = refRoot.child("Destinations");
 
-        updateList();
+        refDestinations.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String count = String.valueOf(dataSnapshot.getChildrenCount());
+                destinationArr = new ModelDestination[Integer.valueOf(count)];
+
+                optionsDestination = new FirebaseListOptions.Builder<ModelDestination>().setQuery(refDestinations, ModelDestination.class).setLayout(R.layout.spinner_item_destination).build();
+
+                FirebaseListAdapter<ModelDestination> firebaseListAdapter = new FirebaseListAdapter<ModelDestination>(optionsDestination) {
+                    @Override
+                    protected void populateView(@NonNull View v, @NonNull ModelDestination model, int position) {
+
+                        DatabaseReference itemRef = getRef(position);
+
+                        TextView txtName = v.findViewById(R.id.txtDestinationName);
+
+                        txtName.setText(model.getName());
+                        destinationArr[position] = new ModelDestination();
+                        destinationArr[position].setId(itemRef.getKey());
+                        destinationArr[position].setName(model.getName());
+                        destinationArr[position].setLatitude(model.getLatitude());
+                        destinationArr[position].setLongitude(model.getLongitude());
+                        destinationArr[position].setAddress(model.getAddress());
+
+                    }
+                };
+
+                firebaseListAdapter.startListening();
+                spnDestination.setAdapter(firebaseListAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                //ShowToast("Failed to read database");
+            }
+        });
+
+        spnDestination.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                destinationSelectIndex = position;
+
+                //refLocation.child("destination").setValue(destinationArr[destinationSelectIndex].getId());
+                updateList();
+                ShowToast(destinationArr[destinationSelectIndex].getId());
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
 
         //triggered whenever an item in the list is clicked
         lstShuttles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -113,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 shuttles = new ModelLocation[ Integer.valueOf(count)];
 
                 //build options for the firebase list adapter
-                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations, ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
+                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations.orderByChild("destination").equalTo(destinationArr[destinationSelectIndex].getId()), ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
 
                 FirebaseListAdapter<ModelLocation> firebaseListAdapter = new FirebaseListAdapter<ModelLocation>(options) {
                     @Override
@@ -180,4 +239,5 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 }
