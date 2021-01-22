@@ -14,5 +14,15 @@
         android:name="com.example.reservationapp.FragmentPickups"
         android:label="fragment_pickups"
         tools:layout="@layout/fragment_pickups" />
+    <fragment
+        android:id="@+id/fragmentSchedules"
+        android:name="com.example.reservationapp.FragmentSchedules"
+        android:label="fragment_schedules"
+        tools:layout="@layout/fragment_schedules" />
+    <fragment
+        android:id="@+id/fragmentProfile"
+        android:name="com.example.reservationapp.FragmentProfile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

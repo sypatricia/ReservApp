@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FragmentProfile">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="25dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Account"
+            android:fontFamily="@font/bold"
+            android:textColor="@color/mclblue"
+            android:layout_marginBottom="25dp"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp" />
+
+        <EditText
+            android:id="@+id/txtStudentId2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:hint="Student Id"
+            android:enabled="false"
+            android:nextFocusForward="@+id/txtFirstName2"
+            android:singleLine="true"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/txtFirstName2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:hint="First Name"
+            android:nextFocusForward="@+id/txtLastName2"
+            android:singleLine="true"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/txtLastName2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:hint="Last Name"
+            android:nextFocusForward="@+id/txtPassword2"
+            android:singleLine="true"
+            android:textSize="20dp" />
+
+        <EditText
+            android:id="@+id/txtPassword2"
+            android:hint="Password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:inputType="textPassword"
+            android:textSize="20dp"
+            android:singleLine="true"
+            android:nextFocusForward="@+id/txtConfirmPass2"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:id="@+id/txtConfirmPass2"
+            android:hint="Confirm Password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:inputType="textPassword"
+            android:textSize="20dp"
+            android:singleLine="true"
+            android:nextFocusForward="@+id/btnRegister"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/btnSave2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:textSize="18dp"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:layout_gravity="center"
+            android:layout_marginLeft="75dp"
+            android:layout_marginRight="75dp"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btnCancel2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:textSize="18dp"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="75dp"
+            android:layout_marginRight="75dp"/>
+
+    </LinearLayout>
+
+</FrameLayout>

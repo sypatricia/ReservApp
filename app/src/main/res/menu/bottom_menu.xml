@@ -8,9 +8,9 @@
         android:id="@+id/fragmentPickups"
         android:icon="@drawable/ic_pickups"/>
     <item android:title="Schedules"
-        android:id="@+id/schedulesActivity"
+        android:id="@+id/fragmentSchedules"
         android:icon="@drawable/ic_sched"/>
     <item android:title="Profile"
-        android:id="@+id/accountEditActivity"
+        android:id="@+id/fragmentProfile"
         android:icon="@drawable/ic_profile" />
 </menu>
