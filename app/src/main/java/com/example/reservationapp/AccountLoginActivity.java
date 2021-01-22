@@ -68,7 +68,7 @@ public class AccountLoginActivity extends AppCompatActivity {
                             else {
                                 ShowToast("Login successful.");
 
-                                Intent intent = new Intent(AccountLoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(AccountLoginActivity.this, NavigationActivity.class);
                                 //pass student id in next activity
                                 intent.putExtra("studentId", studentId);
                                 startActivityForResult(intent,1);
