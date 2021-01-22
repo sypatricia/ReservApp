@@ -57,7 +57,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     private static final int PEMISSIONS_FINE_LOCATION = 99;
 
     TextView txtDriverName, txtStatus, txtDestination, txtCapacity, txtReserved;
-    Button btnBack, btnReserve;
+    Button btnReserve;
 
     GoogleMap gMap;
     Marker markerLocation, markerDestination;
@@ -90,7 +90,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.frgMap);
         mapFragment.getMapAsync(this);
 
-        btnBack = findViewById(R.id.btnBack);
         btnReserve = findViewById(R.id.btnReserve);
         txtDriverName = findViewById(R.id.txtDriverName);
         txtStatus = findViewById(R.id.txtStatus);
@@ -228,12 +227,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             }
         };
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         btnReserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -353,17 +346,14 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         //if shuttle is waiting and cap is not full
         if(status.equals("Waiting") && reservations < capacity){
             btnReserve.setEnabled(true);
-            btnBack.setEnabled(true);
         }
 
         if(!reserved){//if student is not reserved
             btnReserve.setText("Reserve Seat");
             btnReserve.setEnabled(true);
-            btnBack.setEnabled(true);
             txtReserved.setText("");
         }
         else {
-            btnBack.setEnabled(false);
             btnReserve.setText("Cancel Reservation");
             txtReserved.setText("Reserved");
 
@@ -371,7 +361,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                 btnReserve.setText("Reserve Seat");
                 txtReserved.setText("");
                 btnReserve.setEnabled(false);
-                btnBack.setEnabled(true);
             }
         }
 

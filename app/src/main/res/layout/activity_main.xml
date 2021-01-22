@@ -18,20 +18,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/bold"
-            android:text="Shuttles"
-            android:textSize="26dp"
-            android:textColor="@color/mclblue"
-            android:layout_marginBottom="25dp"
-            android:layout_marginLeft="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="Destination"
+            android:fontFamily="@font/regular"
+            android:textColor="@color/mclblue"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:textSize="16dp" />
+            android:textSize="18dp" />
 
         <Spinner
             android:id="@+id/spnDestination"
@@ -47,6 +39,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             android:background="@color/cardview_light_background"
             app:cardCornerRadius="8dp">
 
@@ -69,44 +62,43 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="75dp"
+            android:layout_marginTop="352dp"
             android:layout_marginEnd="75dp"
-            android:layout_marginBottom="20dp"
             android:text="Pick Up Locations"
             android:textAllCaps="false"
             android:textSize="18dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnSchedules"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnSchedules"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="75dp"
-            android:layout_marginTop="256dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="75dp"
             android:text="Departure Schedules"
             android:textAllCaps="false"
             android:textSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/btnPickUps" />
 
         <Button
             android:id="@+id/btnEditAccount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="75dp"
-            android:layout_marginLeft="75dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="75dp"
-            android:layout_marginRight="75dp"
             android:text="Edit Profile"
             android:textAllCaps="false"
             android:textSize="18dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnSchedules" />
 
