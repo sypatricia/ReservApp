@@ -151,7 +151,7 @@ public class FragmentShuttlesList extends Fragment {
 
                 //refLocation.child("destination").setValue(destinationArr[destinationSelectIndex].getId());
                 updateList();
-                ShowToast(destinationArr[destinationSelectIndex].getId());
+                //ShowToast(destinationArr[destinationSelectIndex].getId());
 
             }
 
