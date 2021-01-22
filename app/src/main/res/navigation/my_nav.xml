@@ -25,4 +25,5 @@
         android:name="com.example.reservationapp.AccountEditActivity"
         android:label="activity_account_edit"
         tools:layout="@layout/activity_account_edit" />
+
 </navigation>
