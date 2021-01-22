@@ -3,27 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_nav"
-    app:startDestination="@id/mainActivity">
+    app:startDestination="@id/fragmentShuttlesList">
 
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.reservationapp.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
-    <activity
-        android:id="@+id/pickUpsActivity"
-        android:name="com.example.reservationapp.PickUpsActivity"
-        android:label="activity_pick_ups"
-        tools:layout="@layout/activity_pick_ups" />
-    <activity
-        android:id="@+id/schedulesActivity"
-        android:name="com.example.reservationapp.SchedulesActivity"
-        android:label="activity_schedules"
-        tools:layout="@layout/activity_schedules" />
-    <activity
-        android:id="@+id/accountEditActivity"
-        android:name="com.example.reservationapp.AccountEditActivity"
-        android:label="activity_account_edit"
-        tools:layout="@layout/activity_account_edit" />
+    <fragment
+        android:id="@+id/fragmentShuttlesList"
+        android:name="com.example.reservationapp.FragmentShuttlesList"
+        tools:layout="@layout/fragment_shuttles_list" />
+    <fragment
+        android:id="@+id/fragmentPickups"
+        android:name="com.example.reservationapp.FragmentPickups"
+        android:label="fragment_pickups"
+        tools:layout="@layout/fragment_pickups" />
 
 </navigation>
