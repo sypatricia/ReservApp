@@ -108,7 +108,7 @@ public class FragmentPickups extends Fragment implements OnMapReadyCallback {
         txtAddress = rootView.findViewById(R.id.txtAddress2);
         spnPickUp = rootView.findViewById(R.id.spnPickUp2);
 
-        refPickUps = FirebaseDatabase.getInstance().getReference("PickUps");
+        refPickUps = FirebaseDatabase.getInstance().getReference("Stations");
 
 
         pickupLocation = new LatLng(locationLatitude, locationLatitude);

@@ -105,7 +105,7 @@ public class FragmentShuttlesList extends Fragment {
         refRoot = FirebaseDatabase.getInstance().getReference();
         refLocations = refRoot.child("Tracking");
         refDrivers = refRoot.child("Drivers");
-        refDestinations = refRoot.child("Destinations");
+        refDestinations = refRoot.child("Stations");
 
         refDestinations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
