@@ -1,9 +1,12 @@
 package com.example.reservationapp;
 
+import android.accounts.Account;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +38,7 @@ public class FragmentProfile extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    Button btnSave, btnCancel;
+    Button btnSave, btnCancel, btnLogout;
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtConfirmPass;
     String defFirstName, defLastName;
 
@@ -84,6 +88,7 @@ public class FragmentProfile extends Fragment {
         txtLastName = rootView.findViewById(R.id.txtLastName2);
         btnCancel = rootView.findViewById(R.id.btnCancel2);
         btnSave = rootView.findViewById(R.id.btnSave2);
+        btnLogout = rootView.findViewById(R.id.btnLogout);
         txtPassword = rootView.findViewById(R.id.txtPassword2);
         txtConfirmPass = rootView.findViewById(R.id.txtConfirmPass2);
 
@@ -137,6 +142,16 @@ public class FragmentProfile extends Fragment {
                     showToast("Account Updated Successfully");
                     clearPW();
                 }
+            }
+        });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(FragmentProfile.this.getActivity(), AccountLoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
 

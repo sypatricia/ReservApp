@@ -109,6 +109,19 @@
             android:layout_marginLeft="75dp"
             android:layout_marginRight="75dp"/>
 
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_gravity="center"
+            android:layout_marginLeft="75dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="75dp"
+            android:text="Log Out"
+            android:textAllCaps="false"
+            android:textSize="18dp" />
+
     </LinearLayout>
 
 </FrameLayout>

@@ -143,14 +143,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnEditAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AccountEditActivity.class);
-                intent.putExtra("studentId", studentId);
-                startActivity(intent);
-            }
-        });
 
         btnSchedules.setOnClickListener(new View.OnClickListener() {
             @Override
