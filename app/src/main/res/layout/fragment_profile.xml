@@ -1,127 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentProfile">
+    tools:context=".FragmentProfile"
+    android:id="@+id/frameLayout"
+    android:background="@drawable/profbg">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="25dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bold"
+        android:text="Account"
+        android:textColor="@color/mclblue"
+        android:textSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.094"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.047"
+        tools:layout_conversion_absoluteHeight="33dp"
+        tools:layout_conversion_absoluteWidth="92dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Account"
-            android:fontFamily="@font/bold"
-            android:textColor="@color/mclblue"
-            android:layout_marginBottom="25dp"
-            android:layout_marginLeft="20dp"
-            android:textSize="24dp" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="Student Number"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.155" />
 
-        <EditText
-            android:id="@+id/txtStudentId2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:hint="Student Id"
-            android:enabled="false"
-            android:nextFocusForward="@+id/txtFirstName2"
-            android:singleLine="true"
-            android:textSize="20dp" />
+    <EditText
+        android:id="@+id/txtStudentId2"
+        android:layout_width="306dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="80dp"
+        android:backgroundTint="@color/mclblue"
+        android:enabled="false"
+        android:fontFamily="@font/regular"
+        android:hint="Student Number"
+        android:nextFocusForward="@+id/txtFirstName2"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtFirstName2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.361"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.603"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="94dp" />
 
-        <EditText
-            android:id="@+id/txtFirstName2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="30dp"
-            android:hint="First Name"
-            android:nextFocusForward="@+id/txtLastName2"
-            android:singleLine="true"
-            android:textSize="20dp" />
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="First Name"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.136"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.287" />
 
-        <EditText
-            android:id="@+id/txtLastName2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="30dp"
-            android:hint="Last Name"
-            android:nextFocusForward="@+id/txtPassword2"
-            android:singleLine="true"
-            android:textSize="20dp" />
+    <EditText
+        android:id="@+id/txtFirstName2"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/mclblue"
+        android:fontFamily="@font/regular"
+        android:hint="First Name"
+        android:nextFocusForward="@+id/txtLastName2"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.172"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.342"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="99dp" />
 
-        <EditText
-            android:id="@+id/txtPassword2"
-            android:hint="Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp"
-            android:inputType="textPassword"
-            android:textSize="20dp"
-            android:singleLine="true"
-            android:nextFocusForward="@+id/txtConfirmPass2"
-            android:layout_marginTop="10dp" />
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="Last Name"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.624"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.286" />
 
-        <EditText
-            android:id="@+id/txtConfirmPass2"
-            android:hint="Confirm Password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_marginLeft="30dp"
-            android:inputType="textPassword"
-            android:textSize="20dp"
-            android:singleLine="true"
-            android:nextFocusForward="@+id/btnRegister"
-            android:layout_marginTop="10dp" />
+    <EditText
+        android:id="@+id/txtLastName2"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/mclblue"
+        android:fontFamily="@font/regular"
+        android:hint="Last Name"
+        android:nextFocusForward="@+id/txtPassword2"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.808"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.342"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="99dp" />
 
-        <Button
-            android:id="@+id/btnSave2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:textSize="18dp"
-            android:text="Save"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:layout_marginLeft="75dp"
-            android:layout_marginRight="75dp"
-            android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="Password"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.418" />
 
-        <Button
-            android:id="@+id/btnCancel2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:textSize="18dp"
-            android:text="Cancel"
-            android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="75dp"
-            android:layout_marginRight="75dp"/>
+    <EditText
+        android:id="@+id/txtPassword2"
+        android:layout_width="306dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/mclblue"
+        android:fontFamily="@font/regular"
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_gravity="center"
-            android:layout_marginLeft="75dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="75dp"
-            android:text="Log Out"
-            android:textAllCaps="false"
-            android:textSize="18dp" />
+        android:inputType="textPassword"
+        android:nextFocusForward="@+id/txtConfirmPass2"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.438"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.478"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="91dp" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="Confirm Password"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.159"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.552" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/txtConfirmPass2"
+        android:layout_width="306dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/mclblue"
+        android:fontFamily="@font/regular"
+
+        android:inputType="textPassword"
+        android:nextFocusForward="@+id/btnRegister"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.616"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="163dp" />
+
+    <Button
+        android:id="@+id/btnSave2"
+        android:layout_width="140dp"
+        android:layout_height="50dp"
+        android:background="@drawable/btnblue"
+        android:fontFamily="@font/bold"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.787"
+        tools:layout_conversion_absoluteHeight="48dp"
+        tools:layout_conversion_absoluteWidth="88dp" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:background="@drawable/btnblue"
+        android:fontFamily="@font/bold"
+        android:text="Log Out"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.883"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.047"
+        tools:layout_conversion_absoluteHeight="44dp"
+        tools:layout_conversion_absoluteWidth="172dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

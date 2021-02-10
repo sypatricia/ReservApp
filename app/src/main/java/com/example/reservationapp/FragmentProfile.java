@@ -38,7 +38,7 @@ public class FragmentProfile extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    Button btnSave, btnCancel, btnLogout;
+    Button btnSave, btnLogout;
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtConfirmPass;
     String defFirstName, defLastName;
 
@@ -86,7 +86,6 @@ public class FragmentProfile extends Fragment {
         txtStudentId = rootView.findViewById(R.id.txtStudentId2);
         txtFirstName = rootView.findViewById(R.id.txtFirstName2);
         txtLastName = rootView.findViewById(R.id.txtLastName2);
-        btnCancel = rootView.findViewById(R.id.btnCancel2);
         btnSave = rootView.findViewById(R.id.btnSave2);
         btnLogout = rootView.findViewById(R.id.btnLogout);
         txtPassword = rootView.findViewById(R.id.txtPassword2);
@@ -108,15 +107,6 @@ public class FragmentProfile extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                txtFirstName.setText(defFirstName);
-                txtLastName.setText(defLastName);
-                clearPW();
             }
         });
 
