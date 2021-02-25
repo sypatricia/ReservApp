@@ -16,7 +16,6 @@
         <activity android:name=".ActivityTransitList"></activity>
         <activity android:name=".NavigationActivity" />
         <activity android:name=".SchedulesActivity" />
-        <activity android:name=".AccountEditActivity" />
         <activity android:name=".ShuttleActivity" />
         <activity android:name=".AccountRegisterActivity" />
         <activity android:name=".AccountLoginActivity" />
