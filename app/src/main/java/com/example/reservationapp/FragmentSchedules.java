@@ -1,5 +1,6 @@
 package com.example.reservationapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -123,6 +125,15 @@ public class FragmentSchedules extends Fragment {
 
         firebaseListAdapter.startListening();
         lstSchedules.setAdapter(firebaseListAdapter);
+
+        lstSchedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getActivity(), ActivityTransitList.class);
+                intent.putExtra("schedId", schedules.get(i).getId());
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
