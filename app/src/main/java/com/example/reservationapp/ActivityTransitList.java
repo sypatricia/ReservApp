@@ -160,5 +160,18 @@ public class ActivityTransitList extends AppCompatActivity {
             }
         });
 
+        lstTransits.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(ActivityTransitList.this, ActivityTransitInfo.class);
+                intent.putExtra("transitId", arrTansits.get(i).getId());
+                intent.putExtra("driverId", arrTansits.get(i).getDriver());
+                intent.putExtra("schedId", arrTansits.get(i).getSched());
+                intent.putExtra("fromId", arrTansits.get(i).getFrom());
+                intent.putExtra("toId", arrTansits.get(i).getTo());
+                startActivity(intent);
+            }
+        });
+
     }
 }
