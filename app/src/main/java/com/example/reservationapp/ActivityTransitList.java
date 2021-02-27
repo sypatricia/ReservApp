@@ -30,7 +30,7 @@ public class ActivityTransitList extends AppCompatActivity {
     ListView lstTransits;
     Spinner spnStation;
 
-    String schedId;
+    String studentId, schedId;
 
     DatabaseReference refRoot, refTransits, refSchedule, refDesinations, refDriver;
 
@@ -48,6 +48,7 @@ public class ActivityTransitList extends AppCompatActivity {
         spnStation = findViewById(R.id.spnStation);
 
         schedId = getIntent().getStringExtra("schedId");
+        studentId = getIntent().getStringExtra("studentId");
 
         refRoot = FirebaseDatabase.getInstance().getReference();
         refDriver = refRoot.child("Drivers/");
@@ -164,6 +165,7 @@ public class ActivityTransitList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(ActivityTransitList.this, ActivityTransitInfo.class);
+                intent.putExtra("studentId", studentId);
                 intent.putExtra("transitId", arrTansits.get(i).getId());
                 intent.putExtra("driverId", arrTansits.get(i).getDriver());
                 intent.putExtra("schedId", arrTansits.get(i).getSched());

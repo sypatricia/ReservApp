@@ -41,6 +41,8 @@ public class FragmentSchedules extends Fragment {
 
     ListView lstSchedules;
 
+    String studentId;
+
     ArrayList<ScheduleModel> schedules = new ArrayList<>();
 
     DatabaseReference refSchedules;
@@ -85,6 +87,8 @@ public class FragmentSchedules extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_schedules, container, false);
 
         lstSchedules = rootView.findViewById(R.id.lstSchedules2);
+
+        studentId = getActivity().getIntent().getStringExtra("studentId");
 
         refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
 
@@ -131,6 +135,7 @@ public class FragmentSchedules extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), ActivityTransitList.class);
                 intent.putExtra("schedId", schedules.get(i).getId());
+                intent.putExtra("studentId", studentId);
                 startActivity(intent);
             }
         });
