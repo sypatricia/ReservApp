@@ -25,10 +25,10 @@ import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentSchedules#newInstance} factory method to
+ * Use the {@link FragmentReservations#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentSchedules extends Fragment {
+public class FragmentReservations extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,11 +45,11 @@ public class FragmentSchedules extends Fragment {
 
     ArrayList<ScheduleModel> schedules = new ArrayList<>();
 
-    DatabaseReference refSchedules;
+    DatabaseReference refSchedules, refStudent;
 
-    FirebaseListOptions<ScheduleModel> options;
+    FirebaseListOptions<ModelReservation> options;
 
-    public FragmentSchedules() {
+    public FragmentReservations() {
         // Required empty public constructor
     }
 
@@ -62,8 +62,8 @@ public class FragmentSchedules extends Fragment {
      * @return A new instance of fragment FragmentSchedules.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentSchedules newInstance(String param1, String param2) {
-        FragmentSchedules fragment = new FragmentSchedules();
+    public static FragmentReservations newInstance(String param1, String param2) {
+        FragmentReservations fragment = new FragmentReservations();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -84,19 +84,20 @@ public class FragmentSchedules extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_schedules, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_reservations, container, false);
 
         lstSchedules = rootView.findViewById(R.id.lstSchedules2);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
-        refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
+        //refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
+        refStudent = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
 
-        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedules.orderByChild("hour"), ScheduleModel.class).setLayout(R.layout.list_item_schedule).build();
+        options = new FirebaseListOptions.Builder<ModelReservation>().setQuery(refStudent.child("reservations").orderByValue(), ModelReservation.class).setLayout(R.layout.list_item_reservation).build();
 
-        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
+        FirebaseListAdapter<ModelReservation> firebaseListAdapter = new FirebaseListAdapter<ModelReservation>(options) {
             @Override
-            protected void populateView(@NonNull View v, @NonNull ScheduleModel model, int position) {
+            protected void populateView(@NonNull View v, @NonNull ModelReservation model, int position) {
 
                 DatabaseReference itemRef = getRef(position);
 

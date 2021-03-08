@@ -8,7 +8,7 @@
     <item android:title="Pickups"
         android:id="@+id/fragmentPickups"
         android:icon="@drawable/ic_pickups"/>
-    <item android:title="Schedules"
+    <item android:title="Reservations"
         android:id="@+id/fragmentSchedules"
         android:icon="@drawable/ic_sched"/>
     <item android:title="Account"
