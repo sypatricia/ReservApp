@@ -15,8 +15,11 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,11 +46,11 @@ public class FragmentReservations extends Fragment {
 
     String studentId;
 
-    ArrayList<ScheduleModel> schedules = new ArrayList<>();
+    ArrayList<ModelReservation> reservations = new ArrayList<>();
 
-    DatabaseReference refSchedules, refStudent;
+    DatabaseReference refRoot, refStudent;
 
-    FirebaseListOptions<ModelReservation> options;
+    FirebaseListOptions<Integer> options;
 
     public FragmentReservations() {
         // Required empty public constructor
@@ -91,40 +94,116 @@ public class FragmentReservations extends Fragment {
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
         //refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
-        refStudent = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
+        refRoot = FirebaseDatabase.getInstance().getReference();
+        refStudent = refRoot.child("Students/" + studentId);
 
-        options = new FirebaseListOptions.Builder<ModelReservation>().setQuery(refStudent.child("reservations").orderByValue(), ModelReservation.class).setLayout(R.layout.list_item_reservation).build();
+        options = new FirebaseListOptions.Builder<Integer>().setQuery(refStudent.child("reservations").orderByValue(), Integer.class).setLayout(R.layout.list_item_reservation).build();
 
-        FirebaseListAdapter<ModelReservation> firebaseListAdapter = new FirebaseListAdapter<ModelReservation>(options) {
+        FirebaseListAdapter<Integer> firebaseListAdapter = new FirebaseListAdapter<Integer>(options) {
             @Override
-            protected void populateView(@NonNull View v, @NonNull ModelReservation model, int position) {
+            protected void populateView(@NonNull View v, @NonNull final Integer hour, int position) {
 
                 DatabaseReference itemRef = getRef(position);
+                final String transitId = itemRef.getKey();
 
-                TextView txtTime = v.findViewById(R.id.txtTime);
+                final TextView txtDriver = v.findViewById(R.id.txtDriver);
+                final TextView txtTime = v.findViewById(R.id.txtTime);
+                final TextView txtFrom = v.findViewById(R.id.txtFrom);
+                final TextView txtDestination = v.findViewById(R.id.txtDestination);
 
-                String time = model.getHour() + ":" +model.getMinute();
+                DatabaseReference refTransit = FirebaseDatabase.getInstance().getReference("Transits/" + transitId);
 
-                SimpleDateFormat f24hours = new SimpleDateFormat(
-                        "HH:mm"
-                );
+                refTransit.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                final Date date;
-                try {
-                    date = f24hours.parse(time);
+                        String driverId = "", schedId = "", fromId = "", destinationId = "";
 
-                    final SimpleDateFormat f12hours = new SimpleDateFormat(
-                            "hh:mm aa"
-                    );
+                        driverId = dataSnapshot.child("driver").getValue().toString();
+                        schedId = dataSnapshot.child("sched").getValue().toString();
+                        fromId = dataSnapshot.child("from").getValue().toString();
+                        destinationId = dataSnapshot.child("to").getValue().toString();
 
-                    final String time12hr = f12hours.format(date);
+                        DatabaseReference refDriver = refRoot.child("Drivers/" + driverId);
+                        DatabaseReference refSchedule = refRoot.child("Schedules/" + schedId);
+                        DatabaseReference refFrom = refRoot.child("Stations/" + fromId);
+                        DatabaseReference refDestination = refRoot.child("Stations/" + destinationId);
 
-                    txtTime.setText(time12hr);
+                        refDriver.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String drivername = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+                                txtDriver.setText(drivername);
+                            }
 
-                    schedules.add(new ScheduleModel(itemRef.getKey(), model.getHour(), model.getMinute()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        refSchedule.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                String time = dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
+                                SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
+
+                                final Date date;
+                                try {
+                                    date = f24hours.parse(time);
+
+                                    final SimpleDateFormat f12hours = new SimpleDateFormat("hh:mm aa");
+
+                                    final String time12hr = f12hours.format(date);
+
+                                    txtTime.setText(time12hr);
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        refFrom.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String from = dataSnapshot.child("name").getValue().toString();
+                                txtFrom.setText(from);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        refDestination.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String destination = dataSnapshot.child("name").getValue().toString();
+                                txtDestination.setText(destination);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        reservations.add(new ModelReservation(transitId, driverId, schedId, fromId,destinationId));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         };
 
@@ -134,9 +213,13 @@ public class FragmentReservations extends Fragment {
         lstSchedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), ActivityTransitList.class);
-                intent.putExtra("schedId", schedules.get(i).getId());
+                Intent intent = new Intent(getActivity(), ActivityTransitInfo.class);
                 intent.putExtra("studentId", studentId);
+                intent.putExtra("transitId", reservations.get(i).getTransitId());
+                intent.putExtra("driverId", reservations.get(i).getDriverId());
+                intent.putExtra("schedId", reservations.get(i).getSchedId());
+                intent.putExtra("fromId", reservations.get(i).getFromId());
+                intent.putExtra("toId", reservations.get(i).getDestinationId());
                 startActivity(intent);
             }
         });
