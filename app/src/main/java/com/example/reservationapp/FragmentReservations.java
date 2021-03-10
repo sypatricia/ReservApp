@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ public class FragmentReservations extends Fragment {
     private String mParam2;
 
     ListView lstSchedules;
+    Button btnAddReservation;
 
     String studentId;
 
@@ -90,6 +92,7 @@ public class FragmentReservations extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_reservations, container, false);
 
         lstSchedules = rootView.findViewById(R.id.lstSchedules2);
+        btnAddReservation = rootView.findViewById(R.id.btnAddReservation);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
@@ -220,6 +223,15 @@ public class FragmentReservations extends Fragment {
                 intent.putExtra("schedId", reservations.get(i).getSchedId());
                 intent.putExtra("fromId", reservations.get(i).getFromId());
                 intent.putExtra("toId", reservations.get(i).getDestinationId());
+                startActivity(intent);
+            }
+        });
+
+        btnAddReservation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ActivityReservationAdd.class);
+                intent.putExtra("studentId", studentId);
                 startActivity(intent);
             }
         });
