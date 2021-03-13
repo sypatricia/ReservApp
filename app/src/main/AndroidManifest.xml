@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ActivityTransitInfo"></activity>
+        <activity android:name=".ActivityReservationAdd"></activity>
+        <activity android:name=".ActivityTransitInfo" />
         <activity android:name=".ActivityTransitList" />
         <activity android:name=".NavigationActivity" />
         <activity android:name=".SchedulesActivity" />
