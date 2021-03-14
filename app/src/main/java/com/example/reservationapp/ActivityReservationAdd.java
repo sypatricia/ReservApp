@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -17,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,9 +150,77 @@ public class ActivityReservationAdd extends AppCompatActivity {
             }
         });
 
-        //btnadd
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
-        //btncancel
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+//            refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                    final int time = Integer.parseInt(new DecimalFormat("00").format(scheduleArr[spnSchedule.getSelectedItemPosition()].getHour()) + new DecimalFormat("00").format(scheduleArr[spnSchedule.getSelectedItemPosition()].getMinute()));
+//                    boolean reserved = false;
+//
+//                    for(DataSnapshot reservation : dataSnapshot.getChildren()){
+//                        if(reservation.getValue().toString().equals(time + ""));
+//                            reserved = true;
+//                    }
+//
+//                    if(!reserved){
+//
+//                        for(int i = 0; i < scheduleArr.length; i++){
+//
+//                            String id = scheduleArr[i].getId();
+//                            final String from = stationArr[spnFrom.getSelectedItemPosition()].getId();
+//                            final String des = stationArr[spnDestination.getSelectedItemPosition()].getId();
+//
+//                            refSchedules.child(id).child("transits").addValueEventListener(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                                    for(DataSnapshot transit : dataSnapshot.getChildren()){
+//
+//                                        if(transit.child(from).exists() && transit.child(des).exists()){
+//
+//                                            String transitId = transit.getKey();
+//                                            refStudent.child("reservations").child(transitId).setValue(time);
+//                                            refTransits.child(transitId).child("reservations").child(studentId).setValue(time);
+//
+//                                        }
+//                                    }
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                }
+//                            });
+//
+//                        }
+//
+//                    }
+//                    else ShowToast("You already have a reservation for that time");
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+
+            }
+        });
 
     }
+
+    void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
+
 }
