@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="TextView"
         android:textSize="20dp"
-        android:fontFamily="@font/regular"
+        android:fontFamily="@font/bold"
         android:layout_marginLeft="20dp"/>
 
     <TextView
