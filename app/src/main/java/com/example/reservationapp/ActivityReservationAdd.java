@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import java.util.Date;
 public class ActivityReservationAdd extends AppCompatActivity {
 
     String studentId;
+    boolean reserved = false, notAvailable = false, sameStations = true;
+    int schedPos = 0, fromPos = 0, destinationPos = 0, time = 0;
 
     Button btnAdd, btnCancel;
     Spinner spnSchedule, spnFrom, spnDestination;
@@ -157,68 +160,118 @@ public class ActivityReservationAdd extends AppCompatActivity {
             }
         });
 
+        spnSchedule.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                schedPos = position;
+
+                refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        time = Integer.parseInt(new DecimalFormat("00").format(scheduleArr[schedPos].getHour()) + new DecimalFormat("00").format(scheduleArr[schedPos].getMinute()));
+                        reserved = false;
+
+                        ShowToast(time + "");
+
+                        for(DataSnapshot reservation : dataSnapshot.getChildren()){
+                            if(reservation.getValue().toString().equals(time + ""))
+                                reserved = true;
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        spnFrom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fromPos = position;
+                CheckSchedule();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        spnDestination.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                destinationPos = position;
+                CheckSchedule();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-//            refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                    final int time = Integer.parseInt(new DecimalFormat("00").format(scheduleArr[spnSchedule.getSelectedItemPosition()].getHour()) + new DecimalFormat("00").format(scheduleArr[spnSchedule.getSelectedItemPosition()].getMinute()));
-//                    boolean reserved = false;
-//
-//                    for(DataSnapshot reservation : dataSnapshot.getChildren()){
-//                        if(reservation.getValue().toString().equals(time + ""));
-//                            reserved = true;
-//                    }
-//
-//                    if(!reserved){
-//
-//                        for(int i = 0; i < scheduleArr.length; i++){
-//
-//                            String id = scheduleArr[i].getId();
-//                            final String from = stationArr[spnFrom.getSelectedItemPosition()].getId();
-//                            final String des = stationArr[spnDestination.getSelectedItemPosition()].getId();
-//
-//                            refSchedules.child(id).child("transits").addValueEventListener(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                                    for(DataSnapshot transit : dataSnapshot.getChildren()){
-//
-//                                        if(transit.child(from).exists() && transit.child(des).exists()){
-//
-//                                            String transitId = transit.getKey();
-//                                            refStudent.child("reservations").child(transitId).setValue(time);
-//                                            refTransits.child(transitId).child("reservations").child(studentId).setValue(time);
-//
-//                                        }
-//                                    }
-//
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                }
-//                            });
-//
-//                        }
-//
-//                    }
-//                    else ShowToast("You already have a reservation for that time");
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                }
-//            });
+                if(reserved){
+                    ShowToast("You already have a reservation for that time");
+                }
+                else if(sameStations){
+                    ShowToast("You cannot set the same stations");
+                }
+                else {
+                    String id = scheduleArr[schedPos].getId();
+                    final String from = stationArr[fromPos].getId();
+                    final String des = stationArr[destinationPos].getId();
+
+                    refSchedules.child(id).child("transits").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            for(DataSnapshot transit : dataSnapshot.getChildren()){
+
+                                if(transit.child(from).getValue().toString().equals("from") && transit.child(des).getValue().toString().equals("destination")){
+
+                                    String transitId = transit.getKey();
+                                    refStudent.child("reservations").child(transitId).setValue(time);
+                                    refTransits.child(transitId).child("reservations").child(studentId).setValue(time);
+                                    ShowToast("You were successfully reserved to a shuttle");
+                                    finish();
+                                    return;
+
+                                }
+                            }
+                            ShowToast("Could not find an available shuttle :(");
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
 
             }
         });
 
+    }
+
+    void CheckSchedule(){
+        sameStations = false;
+        if(fromPos == destinationPos){
+            sameStations = true;
+        }
     }
 
     void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
