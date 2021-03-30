@@ -106,6 +106,7 @@ public class FragmentShuttlesList extends Fragment {
         refLocations = refRoot.child("Tracking");
         refDrivers = refRoot.child("Drivers");
         refDestinations = refRoot.child("Stations");
+        refDestinations = refRoot.child("Schedules");
 
         refDestinations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -194,7 +195,7 @@ public class FragmentShuttlesList extends Fragment {
                 shuttles = new ModelLocation[ Integer.valueOf(count)];
 
                 //build options for the firebase list adapter
-                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations.orderByChild("destination").equalTo(destinationArr[destinationSelectIndex].getId()), ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
+                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations.orderByChild("station").equalTo(destinationArr[destinationSelectIndex].getId()), ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
 
                 FirebaseListAdapter<ModelLocation> firebaseListAdapter = new FirebaseListAdapter<ModelLocation>(options) {
                     @Override
