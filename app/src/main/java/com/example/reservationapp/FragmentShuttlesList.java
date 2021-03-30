@@ -45,7 +45,8 @@ public class FragmentShuttlesList extends Fragment {
     DatabaseReference refRoot;
     DatabaseReference refDrivers;
     DatabaseReference refLocations;
-    DatabaseReference refDestinations;
+    DatabaseReference refDestinations;;
+    DatabaseReference refSchedules;
 
     FirebaseListOptions<ModelLocation> options;
     ModelLocation[] shuttles;
@@ -106,7 +107,7 @@ public class FragmentShuttlesList extends Fragment {
         refLocations = refRoot.child("Tracking");
         refDrivers = refRoot.child("Drivers");
         refDestinations = refRoot.child("Stations");
-        refDestinations = refRoot.child("Schedules");
+        refSchedules = refRoot.child("Schedules");
 
         refDestinations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
