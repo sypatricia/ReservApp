@@ -234,22 +234,51 @@ public class ActivityReservationAdd extends AppCompatActivity {
                     final String from = stationArr[fromPos].getId();
                     final String des = stationArr[destinationPos].getId();
 
-                    refSchedules.child(id).child("transits").addValueEventListener(new ValueEventListener() {
+                    refSchedules.child(id).child("transits").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            for(DataSnapshot transit : dataSnapshot.getChildren()){
+                            for(DataSnapshot ds : dataSnapshot.getChildren()){
+                                final int count = (int)dataSnapshot.getChildrenCount();
+                                ShowToast(String.valueOf(count));
+                                final DataSnapshot transit = ds;
 
-                                if(transit.child(from).getValue().toString().equals("from") && transit.child(des).getValue().toString().equals("destination")){
+                                refTransits.child(transit.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        String driver = dataSnapshot.child("driver").getValue().toString();
 
-                                    String transitId = transit.getKey();
-                                    refStudent.child("reservations").child(transitId).setValue(time);
-                                    refTransits.child(transitId).child("reservations").child(studentId).setValue(time);
-                                    ShowToast("You were successfully reserved to a shuttle");
-                                    finish();
-                                    return;
+                                        refRoot.child("Drivers").child(driver).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot driver) {
+                                                int cap = Math.toIntExact((long)driver.child("capacity").getValue());
+                                                int res = Math.toIntExact(count);
 
-                                }
+                                                if(transit.child(from).getValue().toString().equals("from") && transit.child(des).getValue().toString().equals("destination") && res < cap){
+
+                                                    String transitId = transit.getKey();
+                                                    refStudent.child("reservations").child(transitId).setValue(time);
+                                                    refTransits.child(transitId).child("reservations").child(studentId).setValue(time);
+                                                    ShowToast("You were successfully reserved to a shuttle");
+                                                    finish();
+                                                    return;
+
+                                                }
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
                             ShowToast("Could not find an available shuttle :(");
 
