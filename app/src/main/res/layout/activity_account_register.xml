@@ -23,7 +23,7 @@
         app:layout_constraintHorizontal_bias="0.135"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.186" />
+        app:layout_constraintVertical_bias="0.174" />
 
     <TextView
         android:id="@+id/textView3"
@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.235" />
+        app:layout_constraintVertical_bias="0.224" />
 
     <EditText
         android:id="@+id/txtStudentId"
@@ -68,6 +68,7 @@
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="First Name"
+        android:inputType="textCapSentences"
         android:nextFocusForward="@+id/txtLastName"
         android:singleLine="true"
         android:textSize="16dp"
@@ -86,6 +87,7 @@
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="Last Name"
+        android:inputType="textCapSentences"
         android:nextFocusForward="@+id/txtPassword"
         android:singleLine="true"
         android:textSize="16dp"
@@ -149,7 +151,7 @@
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.872" />
+        app:layout_constraintVertical_bias="0.862" />
 
     <ImageView
         android:id="@+id/btnBack"

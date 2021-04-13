@@ -6,7 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".FragmentProfile"
     android:id="@+id/frameLayout"
-    android:background="@drawable/profbg">
+    android:background="@drawable/bgprof">
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/regular"
+        android:text="New Password"
+        android:textColor="@color/txtgrey"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.144"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.583" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,10 +49,10 @@
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.153"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.155" />
+        app:layout_constraintVertical_bias="0.169" />
 
     <EditText
         android:id="@+id/txtStudentId2"
@@ -53,10 +68,10 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/txtFirstName2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.361"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.603"
+        app:layout_constraintVertical_bias="0.626"
         tools:layout_conversion_absoluteHeight="54dp"
         tools:layout_conversion_absoluteWidth="94dp" />
 
@@ -73,7 +88,7 @@
         app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.287" />
+        app:layout_constraintVertical_bias="0.299" />
 
     <EditText
         android:id="@+id/txtFirstName2"
@@ -87,10 +102,10 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.172"
+        app:layout_constraintHorizontal_bias="0.176"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.342"
+        app:layout_constraintVertical_bias="0.355"
         tools:layout_conversion_absoluteHeight="54dp"
         tools:layout_conversion_absoluteWidth="99dp" />
 
@@ -104,10 +119,10 @@
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.624"
+        app:layout_constraintHorizontal_bias="0.603"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.286" />
+        app:layout_constraintVertical_bias="0.299" />
 
     <EditText
         android:id="@+id/txtLastName2"
@@ -121,10 +136,10 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.808"
+        app:layout_constraintHorizontal_bias="0.781"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.342"
+        app:layout_constraintVertical_bias="0.355"
         tools:layout_conversion_absoluteHeight="54dp"
         tools:layout_conversion_absoluteWidth="99dp" />
 
@@ -133,15 +148,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/regular"
-        android:text="Password"
+        android:text="Current Password"
         android:textColor="@color/txtgrey"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintHorizontal_bias="0.154"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.418" />
+        app:layout_constraintVertical_bias="0.471" />
 
     <EditText
         android:id="@+id/txtPassword2"
@@ -156,10 +171,10 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.438"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478"
+        app:layout_constraintVertical_bias="0.521"
         tools:layout_conversion_absoluteHeight="54dp"
         tools:layout_conversion_absoluteWidth="91dp" />
 
@@ -168,15 +183,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/regular"
-        android:text="Confirm Password"
+        android:text="Confirm New Password"
         android:textColor="@color/txtgrey"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.159"
+        app:layout_constraintHorizontal_bias="0.177"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.552" />
+        app:layout_constraintVertical_bias="0.698" />
+
+    <EditText
+        android:id="@+id/txtNewPass"
+        android:layout_width="306dp"
+        android:layout_height="48dp"
+        android:backgroundTint="@color/mclblue"
+        android:fontFamily="@font/regular"
+        android:inputType="textPassword"
+        android:nextFocusForward="@+id/txtConfirmPass2"
+        android:singleLine="true"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.638"
+        tools:layout_conversion_absoluteHeight="54dp"
+        tools:layout_conversion_absoluteWidth="91dp" />
 
     <EditText
         android:id="@+id/txtConfirmPass2"
@@ -184,7 +218,6 @@
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
-
         android:inputType="textPassword"
         android:nextFocusForward="@+id/btnRegister"
         android:singleLine="true"
@@ -194,7 +227,7 @@
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.616"
+        app:layout_constraintVertical_bias="0.756"
         tools:layout_conversion_absoluteHeight="54dp"
         tools:layout_conversion_absoluteWidth="163dp" />
 
@@ -213,7 +246,7 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.787"
+        app:layout_constraintVertical_bias="0.879"
         tools:layout_conversion_absoluteHeight="48dp"
         tools:layout_conversion_absoluteWidth="88dp" />
 
