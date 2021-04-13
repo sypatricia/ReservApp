@@ -9,6 +9,9 @@
         android:id="@+id/fragmentPickups"
         android:icon="@drawable/ic_pickups"/>
     <item android:title="Reservations"
+        android:id="@+id/fragmentReservations"
+        android:icon="@drawable/ic_reservation"/>
+    <item android:title="Schedules"
         android:id="@+id/fragmentSchedules"
         android:icon="@drawable/ic_sched"/>
     <item android:title="Account"

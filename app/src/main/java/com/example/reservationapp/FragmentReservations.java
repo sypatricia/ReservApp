@@ -43,7 +43,7 @@ public class FragmentReservations extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    ListView lstSchedules;
+    ListView lstReservations;
     Button btnAddReservation;
 
     String studentId;
@@ -91,7 +91,7 @@ public class FragmentReservations extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_reservations, container, false);
 
-        lstSchedules = rootView.findViewById(R.id.lstSchedules2);
+        lstReservations = rootView.findViewById(R.id.lstReservations);
         btnAddReservation = rootView.findViewById(R.id.btnAddReservation);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
@@ -211,9 +211,9 @@ public class FragmentReservations extends Fragment {
         };
 
         firebaseListAdapter.startListening();
-        lstSchedules.setAdapter(firebaseListAdapter);
+        lstReservations.setAdapter(firebaseListAdapter);
 
-        lstSchedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lstReservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), ActivityTransitInfo.class);
