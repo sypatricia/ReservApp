@@ -164,9 +164,8 @@
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
-
         android:inputType="textPassword"
-        android:nextFocusForward="@+id/txtConfirmPass2"
+        android:nextFocusForward="@+id/txtnewPass"
         android:singleLine="true"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
