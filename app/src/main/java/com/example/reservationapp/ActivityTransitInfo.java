@@ -27,7 +27,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     String studentId, transitId, driverId, schedId, fromId, toId;
     int capCount, resCount, hour;
-    boolean reservedHere = false, reservedDiff = false;
+    boolean reservedHere = false, reservedDiff = false, inTransit = false;
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
 
@@ -110,6 +110,69 @@ public class ActivityTransitInfo extends AppCompatActivity {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+
+
+                refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
+
+                        refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                //String status = dataSnapshot.child("status").getValue().toString();
+
+                                if(dataSnapshot.child("status").exists()){
+                                    inTransit = true;
+                                    updateReserveButton();
+                                    ShowToast("not in transit");
+                                    return;
+                                }
+                                else{
+                                    //checks if already has a reservation with same time
+                                    for(DataSnapshot reservation : reservationSnapshot.getChildren()){
+                                        if(!reservation.exists()){
+                                            reservedHere = false;
+                                            reservedDiff = false;
+                                            updateReserveButton();
+                                            return;
+                                        }
+                                        else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                            reservedHere = true;
+                                            updateReserveButton();
+                                            return;
+                                        }
+                                        else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                            reservedDiff = true;
+                                            updateReserveButton();
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+                        updateReserveButton();
+
+//                if(!reserved){
+//
+//                    btnReserve.setEnabled(false);
+//                    btnReserve.setText("You are reserved in another transit");
+//                    //reserve student
+//                }
+//                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -134,40 +197,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         });
 
-        refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //checks if already has a reservation with same time
-                for(DataSnapshot reservation : dataSnapshot.getChildren()){
 
-                    if(!reservation.exists()){
-                        reservedHere = false;
-                        reservedDiff = false;
-                    }
-                    else if(transitId.equals(reservation.getKey())){
-                        reservedHere = true;
-                    }
-                    else if(reservation.getValue().equals(hour)){
-                        reservedDiff = true;
-                    }
-                }
-
-                updateReserveButton();
-
-//                if(!reserved){
-//
-//                    btnReserve.setEnabled(false);
-//                    btnReserve.setText("You are reserved in another transit");
-//                    //reserve student
-//                }
-//                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         btnReserve.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,9 +251,13 @@ public class ActivityTransitInfo extends AppCompatActivity {
     }
 
     void updateReserveButton(){
+        if(inTransit){
+            btnReserve.setEnabled(false);
+            btnReserve.setText("Shuttle in Transit");
+        }
         if(reservedDiff){
             btnReserve.setEnabled(false);
-            btnReserve.setText("You are already reserved");
+            btnReserve.setText("Reserved in another");
         }
         else if(reservedHere){
             btnReserve.setText("Cancel Reservation");
@@ -233,4 +267,6 @@ public class ActivityTransitInfo extends AppCompatActivity {
         }
 
     }
+
+    void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 }
