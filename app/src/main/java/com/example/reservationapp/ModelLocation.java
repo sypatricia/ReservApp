@@ -1,19 +1,27 @@
 package com.example.reservationapp;
 
 public class ModelLocation {
-    private String id, address, altitude, speed, destination, status;
+    private String id;
+    private String address;
+    private String altitude;
+    private String speed;
+    private String destination;
+
+    private String from;
+    private String status;
     private float accuracy;
     private double latitude, longitude;
 
     public ModelLocation() {
     }
 
-    public ModelLocation(String id, String address, String altitude, String speed, String destination, String status, float accuracy, double latitude, double longitude) {
+    public ModelLocation(String id, String address, String altitude, String speed, String destination, String from, String status, float accuracy, double latitude, double longitude) {
         this.id = id;
         this.address = address;
         this.altitude = altitude;
         this.speed = speed;
         this.destination = destination;
+        this.from = from;
         this.accuracy = accuracy;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -90,5 +98,13 @@ public class ModelLocation {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 }
