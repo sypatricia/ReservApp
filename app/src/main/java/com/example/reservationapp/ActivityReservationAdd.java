@@ -48,7 +48,6 @@ public class ActivityReservationAdd extends AppCompatActivity {
         studentId = getIntent().getStringExtra("studentId");
 
         btnAdd = findViewById(R.id.btnAdd);
-        btnCancel = findViewById(R.id.btnCancel);
         spnSchedule = findViewById(R.id.spnSchedule);
         spnFrom = findViewById(R.id.spnFrom);
         spnDestination = findViewById(R.id.spnDestination);
@@ -150,13 +149,6 @@ public class ActivityReservationAdd extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 //ShowToast("Failed to read database");
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
             }
         });
 

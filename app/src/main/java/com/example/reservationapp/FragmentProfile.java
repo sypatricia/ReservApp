@@ -39,8 +39,8 @@ public class FragmentProfile extends Fragment {
     private String mParam2;
 
     Button btnSave, btnLogout;
-    EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtConfirmPass;
-    String defFirstName, defLastName;
+    EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtNewPass, txtConfirmPass;
+    String defFirstName, defLastName, defCurrentPass;
 
     String studentId;
 
@@ -89,6 +89,7 @@ public class FragmentProfile extends Fragment {
         btnSave = rootView.findViewById(R.id.btnSave2);
         btnLogout = rootView.findViewById(R.id.btnLogout);
         txtPassword = rootView.findViewById(R.id.txtPassword2);
+        txtNewPass = rootView.findViewById(R.id.txtNewPass);
         txtConfirmPass = rootView.findViewById(R.id.txtConfirmPass2);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
@@ -100,6 +101,7 @@ public class FragmentProfile extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 defFirstName = dataSnapshot.child("firstName").getValue().toString();
                 defLastName = dataSnapshot.child("lastName").getValue().toString();
+                defCurrentPass = dataSnapshot.child("password").getValue().toString();
                 txtFirstName.setText(defFirstName);
                 txtLastName.setText(defLastName);
             }
@@ -115,21 +117,28 @@ public class FragmentProfile extends Fragment {
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
                 final String password = txtPassword.getText().toString();
+                final String newPass = txtNewPass.getText().toString();
                 final String confirmPass = txtConfirmPass.getText().toString();
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
                     showToast("All fields are required");
                 }
-                else if (!password.equals(confirmPass)){
-                    showToast("Passwords do not match");
+
+                else if(!password.equals(defCurrentPass)){
+                    showToast("Invalid Current Password.");
                 }
+
+                else if (!newPass.equals(confirmPass)){
+                    showToast("Passwords do not match.");
+                }
+
                 else{
                     final DatabaseReference student = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
                     student.child("firstName").setValue(firstName);
                     student.child("lastName").setValue(lastName);
-                    student.child("password").setValue(password);
+                    student.child("password").setValue(newPass);
 
-                    showToast("Account Updated Successfully");
+                    showToast("Account updated successfully.");
                     clearPW();
                 }
             }
@@ -150,6 +159,7 @@ public class FragmentProfile extends Fragment {
 
     void clearPW(){
         txtPassword.setText("");
+        txtNewPass.setText("");
         txtConfirmPass.setText("");
     }
 

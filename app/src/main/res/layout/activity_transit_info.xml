@@ -86,7 +86,9 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
+        android:background="@drawable/btnblue"
         android:text="Reserve Seat"
+        android:textColor="@color/white"
         android:textAllCaps="false"
         android:textSize="18dp" />
 

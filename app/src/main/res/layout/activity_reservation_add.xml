@@ -13,7 +13,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="15dp"
-        android:text="Add Reservation"
+        android:text="Add a New Reservation"
+        android:textColor="@color/mclblue"
+        android:fontFamily="@font/bold"
         android:textSize="24dp" />
 
     <TextView
@@ -75,22 +77,14 @@
         android:rowCount="1">
 
         <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_marginRight="10dp"
-            android:text="Cancel"
-            android:textAllCaps="false"
-            android:textSize="18dp" />
-
-        <Button
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_marginLeft="10dp"
-            android:text="Add"
+            android:text="Reserve Seat"
+            android:background="@drawable/btnblue"
+            android:textColor="@color/white"
             android:textAllCaps="false"
             android:textSize="18dp" />
 
