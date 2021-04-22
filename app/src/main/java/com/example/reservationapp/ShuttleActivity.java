@@ -65,7 +65,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     String studentId, studentName;
     boolean reserved = false;
     boolean reservedInOther = false;
-    String id, driverName, status, destinationId, destinationName = "";
+    String id, driverName, status, destinationId, destinationName = "", transitId;
     double locationLatitude, locationLongitude, destinationLatitude, destinationLongitude;
     int reservations = 0, capacity = 0;
 
@@ -153,7 +153,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                 else{
                     destinationId = dataSnapshot.child("destination").getValue().toString();
                     status = dataSnapshot.child("status").getValue().toString();
-                    final DatabaseReference destination = refRoot.child("Destinations/"+ destinationId);
+                    final DatabaseReference destination = refRoot.child("Stations/"+ destinationId);
 
                     destination.addValueEventListener(new ValueEventListener() {
                         @Override
