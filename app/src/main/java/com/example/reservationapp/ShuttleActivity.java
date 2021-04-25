@@ -47,7 +47,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener  {
@@ -62,20 +66,22 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     GoogleMap gMap;
     Marker markerLocation, markerDestination;
 
-    String studentId, studentName;
+    String studentId;
     boolean reserved = false;
     boolean reservedInOther = false;
     String id, driverName, status, destinationId, destinationName = "", transitId;
     double locationLatitude, locationLongitude, destinationLatitude, destinationLongitude;
-    int reservations = 0, capacity = 0;
+    int reservations = 0, capacity = 0, hour = 0;
 
     LatLng shuttleLocation, destinationLocation;
 
     DatabaseReference refRoot;
     DatabaseReference refDriver;
     DatabaseReference refLocation;
-    DatabaseReference refReservations;
+    //DatabaseReference refReservations;
     DatabaseReference refStudent;
+    DatabaseReference refTransit;
+    DatabaseReference refSchedule;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -113,36 +119,36 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         refRoot = FirebaseDatabase.getInstance().getReference();
         refLocation = refRoot.child("Tracking/" + id);
         refDriver = refRoot.child("Drivers/" + id);
-        refReservations = refRoot.child("Reservations/" + id);
+        //refReservations = refRoot.child("Reservations/" + id);
         refStudent = refRoot.child("Students/" + studentId);
 
-        refStudent.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                studentName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-
-                if(!dataSnapshot.hasChild("reserved")) {//if student is not reserved to anyone
-                    reserved = false;
-                    reservedInOther = false;
-                }
-                else {
-                    reserved = true;
-                    if(dataSnapshot.child("reserved").getValue().toString().equals(id)){
-                        reservedInOther = false;
-                    }
-                    else
-                        reservedInOther = true;
-                }
-
-
-                updateInfo();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        refStudent.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                studentName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+//
+//                if(!dataSnapshot.hasChild("reserved")) {//if student is not reserved to anyone
+//                    reserved = false;
+//                    reservedInOther = false;
+//                }
+//                else {
+//                    reserved = true;
+//                    if(dataSnapshot.child("reserved").getValue().toString().equals(id)){
+//                        reservedInOther = false;
+//                    }
+//                    else
+//                        reservedInOther = true;
+//                }
+//
+//
+//                updateInfo();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         refLocation.addValueEventListener(new ValueEventListener() {
             @Override
@@ -154,6 +160,8 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                     destinationId = dataSnapshot.child("destination").getValue().toString();
                     status = dataSnapshot.child("status").getValue().toString();
                     final DatabaseReference destination = refRoot.child("Stations/"+ destinationId);
+                    transitId = dataSnapshot.child("transit").getValue().toString();
+                    refTransit = refRoot.child("Transits").child(transitId);
 
                     destination.addValueEventListener(new ValueEventListener() {
                         @Override
@@ -164,6 +172,120 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                             destinationLocation = new LatLng(destinationLatitude, destinationLongitude);
                             updateInfo();
                             updateMarkers();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
+                            updateInfo();
+
+                            String schedId = dataSnapshot.child("sched").getKey();
+
+                            refSchedule = refRoot.child("Schedules").child(schedId);
+
+                            refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    //                int h = (int)dataSnapshot.child("hour").getValue();
+                    //                int m = (int)dataSnapshot.child("minute").getValue();
+
+                                    hour = Integer.parseInt(new DecimalFormat("00").format(dataSnapshot.child("hour").getValue()) + new DecimalFormat("00").format(dataSnapshot.child("minute").getValue()));
+
+                                    String time = dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
+                                    SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
+
+                                    final Date date;
+                                    try {
+                                        date = f24hours.parse(time);
+
+                                        final SimpleDateFormat f12hours = new SimpleDateFormat("hh:mm aa");
+
+                                        final String time12hr = f12hours.format(date);
+
+                                        //txtSchedule.setText(time12hr);
+
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
+
+                                            refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    //String status = dataSnapshot.child("status").getValue().toString();
+
+                                                    if(dataSnapshot.child("status").exists()){
+                                                        //inTransit = true;
+                                                        updateInfo();
+                                                        //ShowToast("not in transit");
+                                                        return;
+                                                    }
+                                                    else{
+                                                        //checks if already has a reservation with same time
+                                                        for(DataSnapshot reservation : reservationSnapshot.getChildren()){
+                                                            if(!reservation.exists()){
+                                                                reserved = false;
+                                                                reservedInOther = false;
+                                                                updateInfo();
+                                                                return;
+                                                            }
+                                                            else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                                                reserved = true;
+                                                                updateInfo();
+                                                                return;
+                                                            }
+                                                            else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                                                reservedInOther = true;
+                                                                updateInfo();
+                                                                return;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+
+                                            updateInfo();
+
+                            //                if(!reserved){
+                            //
+                            //                    btnReserve.setEnabled(false);
+                            //                    btnReserve.setText("You are reserved in another transit");
+                            //                    //reserve student
+                            //                }
+                            //                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
                         }
 
                         @Override
@@ -196,23 +318,23 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-        refReservations.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                reservations = (int)dataSnapshot.getChildrenCount();
-                if(!dataSnapshot.hasChild(studentId)){
-                    reserved = false;
-                    reservedInOther = false;
-                    refStudent.child("reserved").removeValue();
-                }
-                updateInfo();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        refReservations.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                reservations = (int)dataSnapshot.getChildrenCount();
+//                if(!dataSnapshot.hasChild(studentId)){
+//                    reserved = false;
+//                    reservedInOther = false;
+//                    refStudent.child("reserved").removeValue();
+//                }
+//                updateInfo();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         locationRequest = new LocationRequest();
         locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
@@ -230,25 +352,45 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         btnReserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(status.equals("Waiting")){
-                    if(!reserved){//if student clicks reserve
-                        refReservations.child(studentId).child("name").setValue(studentName);
-                        refStudent.child("reserved").setValue(id);
-                        startLocationUpdates();
+//                if(status.equals("Waiting")){
+//                    if(!reserved){//if student clicks reserve
+//                        refReservations.child(studentId).child("name").setValue(studentName);
+//                        refStudent.child("reserved").setValue(id);
+//                        startLocationUpdates();
+//
+//                        Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+//
+//                    }
+//                    else{//if student clicks cancel
+//                        stopLocationUpdates();
+//                        refReservations.child(studentId).removeValue();
+//                        refStudent.child("reserved").removeValue();
+//
+//                        Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
+//
+//                    }
+//                    updateInfo();
+//                }
 
-                        Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+            if(reservations >= capacity){
+                Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
+            }
+            else if(!reserved){
+                refTransit.child("reservations").child(studentId).setValue(hour);
+                refStudent.child("reservations").child(transitId).setValue(hour);
+                reserved = true;
+                Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+            }
+            else{
+                refTransit.child("reservations").child(studentId).removeValue();
+                refStudent.child("reservations").child(transitId).removeValue();
+                reserved = false;
+                Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
+            }
 
-                    }
-                    else{//if student clicks cancel
-                        stopLocationUpdates();
-                        refReservations.child(studentId).removeValue();
-                        refStudent.child("reserved").removeValue();
+                updateInfo();
 
-                        Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
 
-                    }
-                    updateInfo();
-                }
             }
         });
 
@@ -326,14 +468,14 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             address = "Unable to get street address";
         }
 
-        if(reserved){
-            refReservations.child(studentId).child("latitude").setValue(latitude);
-            refReservations.child(studentId).child("longitude").setValue(longitude);
-            refReservations.child(studentId).child("accuracy").setValue(accuracy);
-            refReservations.child(studentId).child("altitude").setValue(altitude);
-            refReservations.child(studentId).child("speed").setValue(speed);
-            refReservations.child(studentId).child("address").setValue(address);
-        }
+//        if(reserved){
+//            refReservations.child(studentId).child("latitude").setValue(latitude);
+//            refReservations.child(studentId).child("longitude").setValue(longitude);
+//            refReservations.child(studentId).child("accuracy").setValue(accuracy);
+//            refReservations.child(studentId).child("altitude").setValue(altitude);
+//            refReservations.child(studentId).child("speed").setValue(speed);
+//            refReservations.child(studentId).child("address").setValue(address);
+//        }
 
     }
 
