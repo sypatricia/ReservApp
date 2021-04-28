@@ -5,7 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="bottom"
     tools:context=".ShuttleActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <fragment
+            android:id="@+id/frgMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="400dp" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,11 +31,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:gravity="end"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="238dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -31,8 +45,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginBottom="5dp"
-                    android:text="Driver"
                     android:fontFamily="@font/regular"
+                    android:text="Driver"
                     android:textSize="30dp" />
 
                 <TextView
@@ -41,34 +55,34 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginBottom="5dp"
-                    android:text="Status"
                     android:fontFamily="@font/regular"
+                    android:text="Status"
                     android:textSize="18dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Seat Capacity"
+                    android:layout_marginRight="20dp"
                     android:fontFamily="@font/regular"
+                    android:text="Seat Capacity"
                     android:textColor="@color/mclblue"
-                    android:textSize="16dp"
-                    android:layout_marginRight="20dp"/>
+                    android:textSize="16dp" />
 
                 <TextView
                     android:id="@+id/txtCapacity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Capacity"
-                    android:textSize="18dp"
+                    android:layout_marginRight="20dp"
                     android:fontFamily="@font/regular"
-                    android:layout_marginRight="20dp"/>
+                    android:text="Capacity"
+                    android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/txtReserved"
@@ -76,8 +90,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="5dp"
-                    android:text=""
                     android:fontFamily="@font/regular"
+                    android:text=""
                     android:textSize="18dp" />
 
 
@@ -88,17 +102,93 @@
 
     </LinearLayout>
 
-
-
-    <TextView
-        android:id="@+id/txtDestination"
-        android:layout_width="wrap_content"
+    <GridLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
-        android:text="Destination"
-        android:fontFamily="@font/regular"
-        android:textSize="18dp" />
+        android:columnCount="2"
+        android:rowCount="1">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="From"
+                android:fontFamily="@font/regular"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/txtFrom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="From"
+                android:fontFamily="@font/regular"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Destination"
+                android:fontFamily="@font/regular"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/txtDestination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="Destination"
+                android:fontFamily="@font/regular"
+                android:textSize="18dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="Departure Time"
+                android:fontFamily="@font/regular"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/txtSchedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="time"
+                android:fontFamily="@font/regular"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/txtEstimated"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:fontFamily="@font/regular"
+                android:text="Estimated"
+                android:textSize="18dp" />
+
+        </LinearLayout>
+
+    </GridLayout>
 
     <GridLayout
         android:layout_width="match_parent"
@@ -123,18 +213,5 @@
             android:textSize="20dp" />
 
     </GridLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <fragment
-            android:id="@+id/frgMap"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
 
 </LinearLayout>

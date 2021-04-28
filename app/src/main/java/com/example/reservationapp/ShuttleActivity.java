@@ -51,6 +51,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     public static final int FASTEST_UPDATE_INTERVAL = 5;
     private static final int PEMISSIONS_FINE_LOCATION = 99;
 
-    TextView txtDriverName, txtStatus, txtDestination, txtCapacity, txtReserved;
+    TextView txtDriverName, txtStatus, txtDestination, txtCapacity, txtReserved, txtFrom, txtSchedule, txtEstimated;
     Button btnReserve;
 
     GoogleMap gMap;
@@ -69,7 +70,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     String studentId;
     boolean reserved = false;
     boolean reservedInOther = false;
-    String id, driverName, status, destinationId, destinationName = "", transitId;
+    String id, driverName, status, destinationId, destinationName = "", transitId, fromId, fromName, schedule, scheduleId, estimated = "";
     double locationLatitude, locationLongitude, destinationLatitude, destinationLongitude;
     int reservations = 0, capacity = 0, hour = 0;
 
@@ -102,6 +103,9 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         txtDestination = findViewById(R.id.txtDestination);
         txtCapacity = findViewById(R.id.txtCapacity);
         txtReserved = findViewById(R.id.txtReserved);
+        txtFrom = findViewById(R.id.txtFrom);
+        txtSchedule = findViewById(R.id.txtSchedule);
+        txtEstimated = findViewById(R.id.txtEstimated);
 
         studentId = getIntent().getStringExtra("studentId");
 
@@ -158,12 +162,14 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                 }
                 else{
                     destinationId = dataSnapshot.child("destination").getValue().toString();
+                    fromId = dataSnapshot.child("from").getValue().toString();
                     status = dataSnapshot.child("status").getValue().toString();
-                    final DatabaseReference destination = refRoot.child("Stations/"+ destinationId);
+                    final DatabaseReference destination = refRoot.child("Stations/"+ fromId);
+                    final DatabaseReference from = refRoot.child("Stations/"+ destinationId);
                     transitId = dataSnapshot.child("transit").getValue().toString();
                     refTransit = refRoot.child("Transits").child(transitId);
 
-                    destination.addValueEventListener(new ValueEventListener() {
+                    destination.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             destinationName = dataSnapshot.child("name").getValue().toString();
@@ -180,26 +186,63 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                         }
                     });
 
-                    refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                    from.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            fromName = dataSnapshot.child("name").getValue().toString();
+                            updateInfo();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    refTransit.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
                             updateInfo();
 
-                            String schedId = dataSnapshot.child("sched").getKey();
+                            String schedId = dataSnapshot.child("sched").getValue().toString();
 
                             refSchedule = refRoot.child("Schedules").child(schedId);
 
                             refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    //                int h = (int)dataSnapshot.child("hour").getValue();
-                    //                int m = (int)dataSnapshot.child("minute").getValue();
+                                    int h = Integer.valueOf(dataSnapshot.child("hour").getValue().toString()) ;
+                                    int m = Integer.valueOf(dataSnapshot.child("minute").getValue().toString());
 
-                                    hour = Integer.parseInt(new DecimalFormat("00").format(dataSnapshot.child("hour").getValue()) + new DecimalFormat("00").format(dataSnapshot.child("minute").getValue()));
+                                    if(status.equals("Waiting")){
+                                        Date currentTime = Calendar.getInstance().getTime();
+                                        Calendar cal = Calendar.getInstance();
+                                        cal.setTime(currentTime);
+                                        int currentHours = cal.get(Calendar.HOUR_OF_DAY);
+                                        int currentMins = cal.get(Calendar.MINUTE);
 
-                                    String time = dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
-                                    SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
+//                                        int estHrs = h - currentHours;
+//                                        int estMins = m - currentMins;
+
+                                        estimated = "ETD " + (((h*60) + m) - ((currentHours*60) + currentMins)) + " min(s)";
+
+//                                        if(estHrs > 0){
+//                                            estimated += estHrs + " hr(s) ";
+//                                        }
+//
+//                                        estimated += estMins + " min(s)";
+                                    }
+                                    else{
+
+                                    }
+
+                                    hour = Integer.parseInt(new DecimalFormat("00").format(h) + new DecimalFormat("00").format(m));
+
+
+                                    final SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
+
+                                    String time = h + ":" + m;
 
                                     final Date date;
                                     try {
@@ -209,7 +252,8 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
                                         final String time12hr = f12hours.format(date);
 
-                                        //txtSchedule.setText(time12hr);
+                                        schedule = time12hr;
+                                        updateInfo();
 
                                     } catch (ParseException e) {
                                         e.printStackTrace();
@@ -483,7 +527,10 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         txtDriverName.setText(driverName);
         txtStatus.setText("Status: " + status);
         txtCapacity.setText(reservations + "/" + capacity);
-        txtDestination.setText("Destination: " + destinationName);
+        txtDestination.setText(destinationName);
+        txtFrom.setText(fromName);
+        txtSchedule.setText(schedule);
+        txtEstimated.setText(estimated);
 
         //if shuttle is waiting and cap is not full
         if(status.equals("Waiting") && reservations < capacity){
@@ -637,5 +684,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     public void onRoutingCancelled() {
         Findroutes(shuttleLocation, destinationLocation);
     }
+
+    void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 
 }
