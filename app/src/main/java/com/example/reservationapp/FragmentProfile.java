@@ -121,7 +121,7 @@ public class FragmentProfile extends Fragment {
                 final String confirmPass = txtConfirmPass.getText().toString();
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
-                    showToast("All fields are required");
+                    showToast("Please fill out all fields.");
                 }
 
                 else if(!password.equals(defCurrentPass)){
