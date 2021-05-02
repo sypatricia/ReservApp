@@ -48,7 +48,7 @@ public class AccountLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //get current values in text field
                 final String studentId = txtStudentId.getText().toString();
-                final String pass = txtPassword.getText().toString();
+                final String pass = AESEncryption.encrypt(txtPassword.getText().toString());
 
                 if (studentId.isEmpty() || pass.isEmpty()){
                     ShowToast("Please enter your Student Number and Password.");

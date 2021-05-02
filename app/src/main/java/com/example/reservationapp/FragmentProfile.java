@@ -116,9 +116,10 @@ public class FragmentProfile extends Fragment {
             public void onClick(View v) {
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
+
                 final String password = txtPassword.getText().toString();
-                final String newPass = txtNewPass.getText().toString();
-                final String confirmPass = txtConfirmPass.getText().toString();
+                final String newPass = AESEncryption.encrypt(txtNewPass.getText().toString());
+                final String confirmPass = AESEncryption.encrypt(txtConfirmPass.getText().toString());
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
                     showToast("Please fill out all fields.");
