@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,6 +39,8 @@ public class AccountRegisterActivity extends AppCompatActivity {
         txtConfirmPass = findViewById(R.id.txtConfirmPass);
         btnBack = findViewById(R.id.btnBack);
 
+        txtStudentId.setTransformationMethod(new NumericKeyBoardTransformationMethod());
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //get values from ui elements
@@ -48,10 +51,11 @@ public class AccountRegisterActivity extends AppCompatActivity {
                 final String confirmPass = AESEncryption.encrypt(txtConfirmPass.getText().toString());
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
-                    showToast("All fields are required");
+                    showToast("All fields are required.");
                 }
+
                 else if (!password.equals(confirmPass)){
-                    showToast("Passwords do not match");
+                    showToast("Passwords do not match.");
                 }
                 else{
                     final DatabaseReference students = FirebaseDatabase.getInstance().getReference("Students");
@@ -59,7 +63,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(studentId)) {
-                                showToast("That student already exists");
+                                showToast("That student already exists.");
                             }
                             else {
                                 DatabaseReference student = students.child(studentId);
@@ -67,14 +71,14 @@ public class AccountRegisterActivity extends AppCompatActivity {
                                 student.child("lastName").setValue(lastName);
                                 student.child("password").setValue(password);
 
-                                showToast("Save Successful");
+                                showToast("Account registered successfully.");
                                 finish();
                             }
                         }
 
                         @Override
                         public void onCancelled(DatabaseError error) {
-                            showToast("Failed to read database");
+                            showToast("Failed to read database.");
                         }
                     });
                 }
@@ -92,4 +96,11 @@ public class AccountRegisterActivity extends AppCompatActivity {
     }
 
     void showToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
+
+    private class NumericKeyBoardTransformationMethod extends PasswordTransformationMethod {
+        @Override
+        public CharSequence getTransformation(CharSequence source, View view) {
+            return source;
+        }
+    }
 }

@@ -117,7 +117,7 @@ public class FragmentProfile extends Fragment {
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
 
-                final String password = txtPassword.getText().toString();
+                final String password = AESEncryption.encrypt(txtPassword.getText().toString());
                 final String newPass = AESEncryption.encrypt(txtNewPass.getText().toString());
                 final String confirmPass = AESEncryption.encrypt(txtConfirmPass.getText().toString());
 

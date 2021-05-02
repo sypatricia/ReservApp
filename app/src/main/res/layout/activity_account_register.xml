@@ -17,13 +17,13 @@
         android:fontFamily="@font/bold"
         android:text="Sign Up"
         android:textColor="@color/mclblue"
-        android:textSize="28dp"
+        android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.135"
+        app:layout_constraintHorizontal_bias="0.104"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.174" />
+        app:layout_constraintVertical_bias="0.169" />
 
     <TextView
         android:id="@+id/textView3"
@@ -32,35 +32,38 @@
         android:fontFamily="@font/regular"
         android:text="Sign up to track shuttle locations and reserve seats."
         android:textColor="@color/mclblue"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.314"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.224" />
+        app:layout_constraintVertical_bias="0.223" />
 
     <EditText
         android:id="@+id/txtStudentId"
-        android:layout_width="306dp"
+        android:layout_width="276dp"
         android:layout_height="48dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="272dp"
+        android:layout_marginTop="236dp"
         android:layout_marginEnd="30dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="Student Number"
+        android:maxLength="10"
+        android:inputType="numberPassword"
         android:nextFocusForward="@+id/txtFirstName"
         android:singleLine="true"
         android:textColor="@color/txtgrey"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/txtFirstName"
-        android:layout_width="306dp"
+        android:layout_width="276dp"
         android:layout_height="48dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
@@ -79,7 +82,7 @@
 
     <EditText
         android:id="@+id/txtLastName"
-        android:layout_width="306dp"
+        android:layout_width="276dp"
         android:layout_height="48dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
@@ -98,7 +101,7 @@
 
     <EditText
         android:id="@+id/txtPassword"
-        android:layout_width="306dp"
+        android:layout_width="276dp"
         android:layout_height="48dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="16dp"
@@ -117,7 +120,7 @@
 
     <EditText
         android:id="@+id/txtConfirmPass"
-        android:layout_width="306dp"
+        android:layout_width="276dp"
         android:layout_height="48dp"
         android:layout_marginStart="30dp"
         android:layout_marginTop="16dp"
@@ -136,8 +139,8 @@
 
     <Button
         android:id="@+id/btnRegister"
-        android:layout_width="306dp"
-        android:layout_height="54dp"
+        android:layout_width="290dp"
+        android:layout_height="52dp"
         android:layout_marginStart="75dp"
         android:layout_marginEnd="75dp"
         android:background="@drawable/btnblue"
@@ -145,7 +148,7 @@
         android:text="Create Account"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="18dp"
+        android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.511"
@@ -155,8 +158,8 @@
 
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="32dp"
-        android:layout_height="28dp"
+        android:layout_width="30dp"
+        android:layout_height="26dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.078"

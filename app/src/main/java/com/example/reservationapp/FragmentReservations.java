@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +45,7 @@ public class FragmentReservations extends Fragment {
     private String mParam2;
 
     ListView lstReservations;
-    Button btnAddReservation;
+    //Button btnAddReservation;
 
     String studentId;
 
@@ -53,6 +54,7 @@ public class FragmentReservations extends Fragment {
     DatabaseReference refRoot, refStudent;
 
     FirebaseListOptions<Integer> options;
+    FloatingActionButton fab;
 
     public FragmentReservations() {
         // Required empty public constructor
@@ -92,7 +94,8 @@ public class FragmentReservations extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_reservations, container, false);
 
         lstReservations = rootView.findViewById(R.id.lstReservations);
-        btnAddReservation = rootView.findViewById(R.id.btnAddReservation);
+
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
@@ -227,7 +230,7 @@ public class FragmentReservations extends Fragment {
             }
         });
 
-        btnAddReservation.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ActivityReservationAdd.class);

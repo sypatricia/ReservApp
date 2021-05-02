@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Station"
-            android:fontFamily="@font/regular"
+            android:fontFamily="@font/bold"
             android:textColor="@color/mclblue"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"

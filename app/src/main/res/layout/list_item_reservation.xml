@@ -7,29 +7,44 @@
     android:paddingTop="15dp"
     android:paddingBottom="15dp" >
 
-    <TextView
-        android:id="@+id/txtTime"
-        android:layout_width="match_parent"
+    <GridLayout
+        android:id="@+id/simpleGridView"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="20dp"
-        android:fontFamily="@font/bold"
-        android:layout_marginLeft="20dp"/>
+        android:columnCount="2">
+
+        <TextView
+            android:id="@+id/txtDriver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20dp"
+            android:fontFamily="@font/medium"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="16dp"
+            android:layout_columnWeight="1"/>
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20dp"
+            android:gravity="right"
+            android:fontFamily="@font/medium"
+            android:textColor="@color/darkblue"
+            android:paddingRight="20dp"
+            android:paddingBottom="4dp"
+            android:layout_columnWeight="1"/>
+
+    </GridLayout>
 
     <TextView
-        android:id="@+id/txtDriver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="18dp"
-        android:fontFamily="@font/regular"
-        android:layout_marginLeft="20dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="From:"
+        android:text="DEPART FROM:"
         android:textSize="14dp"
+        android:textColor="@color/darkblue"
         android:fontFamily="@font/regular"
         android:layout_marginLeft="20dp"/>
 
@@ -40,13 +55,15 @@
         android:text="TextView"
         android:textSize="18dp"
         android:fontFamily="@font/regular"
+        android:paddingBottom="10dp"
         android:layout_marginLeft="20dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Destination:"
+        android:text="DESTINATION:"
         android:textSize="14dp"
+        android:textColor="@color/darkblue"
         android:fontFamily="@font/regular"
         android:layout_marginLeft="20dp"/>
 

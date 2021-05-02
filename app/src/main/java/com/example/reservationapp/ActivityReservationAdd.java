@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ public class ActivityReservationAdd extends AppCompatActivity {
 
     Button btnAdd, btnCancel;
     Spinner spnSchedule, spnFrom, spnDestination;
+    ImageView btnBack;
 
     DatabaseReference refRoot, refSchedules, refStations, refTransits, refStudent;
 
@@ -51,6 +53,7 @@ public class ActivityReservationAdd extends AppCompatActivity {
         spnSchedule = findViewById(R.id.spnSchedule);
         spnFrom = findViewById(R.id.spnFrom);
         spnDestination = findViewById(R.id.spnDestination);
+        btnBack = findViewById(R.id.btnBack);
 
         refRoot = FirebaseDatabase.getInstance().getReference();
         refSchedules = refRoot.child("Schedules");
@@ -208,6 +211,13 @@ public class ActivityReservationAdd extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

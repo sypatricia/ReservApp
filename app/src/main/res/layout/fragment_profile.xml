@@ -15,7 +15,7 @@
         android:fontFamily="@font/regular"
         android:text="New Password"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.144"
@@ -46,7 +46,7 @@
         android:fontFamily="@font/regular"
         android:text="Student Number"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.153"
@@ -56,7 +56,7 @@
 
     <EditText
         android:id="@+id/txtStudentId2"
-        android:layout_width="306dp"
+        android:layout_width="286dp"
         android:layout_height="48dp"
         android:layout_marginTop="80dp"
         android:backgroundTint="@color/mclblue"
@@ -82,7 +82,7 @@
         android:fontFamily="@font/regular"
         android:text="First Name"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.136"
@@ -92,7 +92,7 @@
 
     <EditText
         android:id="@+id/txtFirstName2"
-        android:layout_width="150dp"
+        android:layout_width="142dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
@@ -102,7 +102,7 @@
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.176"
+        app:layout_constraintHorizontal_bias="0.171"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.355"
@@ -116,7 +116,7 @@
         android:fontFamily="@font/regular"
         android:text="Last Name"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.603"
@@ -126,7 +126,7 @@
 
     <EditText
         android:id="@+id/txtLastName2"
-        android:layout_width="150dp"
+        android:layout_width="142dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
@@ -150,7 +150,7 @@
         android:fontFamily="@font/regular"
         android:text="Current Password"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.154"
@@ -160,7 +160,7 @@
 
     <EditText
         android:id="@+id/txtPassword2"
-        android:layout_width="306dp"
+        android:layout_width="286dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
@@ -184,7 +184,7 @@
         android:fontFamily="@font/regular"
         android:text="Confirm New Password"
         android:textColor="@color/txtgrey"
-        android:textSize="16dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.177"
@@ -194,7 +194,7 @@
 
     <EditText
         android:id="@+id/txtNewPass"
-        android:layout_width="306dp"
+        android:layout_width="286dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
@@ -213,7 +213,7 @@
 
     <EditText
         android:id="@+id/txtConfirmPass2"
-        android:layout_width="306dp"
+        android:layout_width="286dp"
         android:layout_height="48dp"
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
@@ -233,7 +233,7 @@
     <Button
         android:id="@+id/btnSave2"
         android:layout_width="140dp"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:background="@drawable/btnblue"
         android:fontFamily="@font/bold"
         android:text="Save"
@@ -251,11 +251,14 @@
 
     <Button
         android:id="@+id/btnLogout"
-        android:layout_width="110dp"
-        android:layout_height="40dp"
+        android:layout_width="120dp"
+        android:layout_height="42dp"
         android:background="@drawable/btnblue"
         android:fontFamily="@font/bold"
+        android:drawableLeft="@drawable/ic_logout"
         android:text="Log Out"
+        android:paddingLeft="10dp"
+        android:paddingRight="8dp"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="16dp"

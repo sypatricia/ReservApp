@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="25dp">
+        android:paddingTop="22dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,14 +20,14 @@
             android:textColor="@color/mclblue"
             android:layout_marginBottom="25dp"
             android:layout_marginLeft="20dp"
-            android:textSize="24dp" />
+            android:textSize="22dp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="75dp"
             android:background="@color/cardview_light_background"
             app:cardCornerRadius="8dp">
 
@@ -48,20 +48,19 @@
         android:paddingTop="15dp"
         android:paddingBottom="75dp" >
 
-        <Button
-            android:id="@+id/btnAddReservation"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/btnblue"
-            android:drawablePadding="1dip"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:text="New Reservation"
-            android:drawableLeft="@drawable/ic_add"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
+            android:layout_gravity="right"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/mclblue"
+            app:layout_anchor="@id/lstReservations"
+            app:layout_anchorGravity="bottom|right|end"
+            app:elevation="6dp"
+            app:fabSize="normal"
+            android:id="@+id/fab"/>
 
     </LinearLayout>
 

@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="275dp"
-        android:layout_height="121dp"
+        android:layout_width="243dp"
+        android:layout_height="106dp"
         android:layout_marginStart="51dp"
         android:layout_marginTop="262dp"
         android:layout_marginEnd="51dp"
@@ -18,5 +18,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.21"
         app:srcCompat="@drawable/sslogo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

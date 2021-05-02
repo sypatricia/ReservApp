@@ -49,6 +49,7 @@ public class FragmentSchedules extends Fragment {
 
     FirebaseListOptions<ScheduleModel> options;
 
+
     public FragmentSchedules() {
         // Required empty public constructor
     }
