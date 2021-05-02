@@ -36,6 +36,8 @@
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="Student Number"
+        android:maxLength="10"
+        android:inputType="numberPassword"
         android:nextFocusForward="@+id/txtPassword"
         android:singleLine="true"
         android:textColor="@color/txtgrey"
