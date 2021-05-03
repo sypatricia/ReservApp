@@ -54,6 +54,11 @@ public class AccountRegisterActivity extends AppCompatActivity {
                     showToast("All fields are required.");
                 }
 
+                else if(studentId.length()!=10){
+
+                    showToast("Invalid Student Number.");
+                }
+
                 else if (!password.equals(confirmPass)){
                     showToast("Passwords do not match.");
                 }
