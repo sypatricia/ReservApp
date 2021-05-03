@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class ActivityTransitList extends AppCompatActivity {
     TextView txtTime;
     ListView lstTransits;
     Spinner spnStation;
+    ImageView btnBack;
 
     String studentId, schedId;
 
@@ -46,6 +48,7 @@ public class ActivityTransitList extends AppCompatActivity {
         txtTime = findViewById(R.id.txtTime);
         lstTransits = findViewById(R.id.lstTransits);
         spnStation = findViewById(R.id.spnStation);
+        btnBack =  findViewById(R.id.btnBack);
 
         schedId = getIntent().getStringExtra("schedId");
         studentId = getIntent().getStringExtra("studentId");
@@ -172,6 +175,13 @@ public class ActivityTransitList extends AppCompatActivity {
                 intent.putExtra("fromId", arrTansits.get(i).getFrom());
                 intent.putExtra("toId", arrTansits.get(i).getTo());
                 startActivity(intent);
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

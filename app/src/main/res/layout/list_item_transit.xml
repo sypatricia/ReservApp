@@ -13,14 +13,16 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="20dp"
-        android:fontFamily="@font/regular"
-        android:layout_marginLeft="20dp"/>
+        android:fontFamily="@font/medium"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="From:"
+        android:text="DEPART FROM:"
         android:textSize="14dp"
+        android:textColor="@color/darkblue"
         android:fontFamily="@font/regular"
         android:layout_marginLeft="20dp"/>
 
@@ -31,13 +33,15 @@
         android:text=""
         android:textSize="18dp"
         android:fontFamily="@font/regular"
+        android:paddingBottom="10dp"
         android:layout_marginLeft="20dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To:"
+        android:text="DESTINATION:"
         android:textSize="14dp"
+        android:textColor="@color/darkblue"
         android:fontFamily="@font/regular"
         android:layout_marginLeft="20dp"/>
 

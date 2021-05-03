@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     TextView txtName, txtSchedule, txtFrom, txtTo, txtReserved;
     Button btnReserve;
+    ImageView btnBack;
 
     String studentId, transitId, driverId, schedId, fromId, toId;
     int capCount, resCount, hour;
@@ -42,6 +44,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         txtTo = findViewById(R.id.txtTo);
         txtReserved = findViewById(R.id.txtReserved);
         btnReserve = findViewById(R.id.btnReserve);
+        btnBack = findViewById(R.id.btnBack);
 
         studentId = getIntent().getStringExtra("studentId");
         transitId = getIntent().getStringExtra("transitId");
@@ -240,6 +243,13 @@ public class ActivityTransitInfo extends AppCompatActivity {
 //                    }
 //                    updateInfo();
 //                }
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

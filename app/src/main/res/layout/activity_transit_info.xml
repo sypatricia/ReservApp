@@ -5,40 +5,61 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="20dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    tools:context=".ActivityTransitInfo">
+    android:paddingTop="22dp"
+    tools:context=".ActivityTransitInfo"
+    android:background="@drawable/addbg">
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="32dp"
+        android:layout_height="28dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.078"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.087"
+        app:srcCompat="@drawable/back_btn" />
 
     <TextView
         android:id="@+id/txtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
         android:text=""
         android:textSize="24dp"
         android:fontFamily="@font/regular"/>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Schedule"
         android:textSize="14dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/txtSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
         android:textSize="20dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="From"
+        android:text="Depart from"
         android:textSize="14dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:textColor="@color/darkblue"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/txtFrom"
@@ -46,37 +67,46 @@
         android:layout_height="wrap_content"
         android:text=""
         android:textSize="18dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To"
+        android:text="Destination"
         android:textSize="14dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:textColor="@color/darkblue"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/txtTo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
-        android:textSize="18dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Reservations / Capacity"
         android:textSize="14dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/txtReserved"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text=""
-        android:textSize="18dp"
-        android:fontFamily="@font/regular"/>
+        android:fontFamily="@font/regular"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"/>
 
     <Button
         android:id="@+id/btnReserve"
@@ -88,6 +118,7 @@
         android:layout_marginLeft="20dp"
         android:background="@drawable/btnblue"
         android:text="Reserve Seat"
+        android:fontFamily="@font/bold"
         android:textColor="@color/white"
         android:textAllCaps="false"
         android:textSize="18dp" />
