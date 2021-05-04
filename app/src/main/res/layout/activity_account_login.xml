@@ -59,7 +59,7 @@
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="Password"
-        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.!@#$%^*()-_=+{}[]|\;:'<>/?"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.!@#$%^*()-_=+{}[]|\;:'/?"
         android:inputType="textPassword"
         android:nextFocusForward="@+id/btnLogin"
         android:singleLine="true"
