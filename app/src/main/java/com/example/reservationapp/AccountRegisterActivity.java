@@ -47,8 +47,8 @@ public class AccountRegisterActivity extends AppCompatActivity {
                 final String studentId = txtStudentId.getText().toString();
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
-                final String password = AESEncryption.encrypt(txtPassword.getText().toString());
-                final String confirmPass = AESEncryption.encrypt(txtConfirmPass.getText().toString());
+                final String password = txtPassword.getText().toString();
+                final String confirmPass = txtConfirmPass.getText().toString();
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
                     showToast("All fields are required.");
@@ -74,7 +74,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
                                 DatabaseReference student = students.child(studentId);
                                 student.child("firstName").setValue(firstName);
                                 student.child("lastName").setValue(lastName);
-                                student.child("password").setValue(password);
+                                student.child("password").setValue(AESEncryption.encrypt(password));
 
                                 showToast("Account registered successfully.");
                                 finish();
