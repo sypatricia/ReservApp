@@ -117,27 +117,31 @@ public class FragmentProfile extends Fragment {
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
 
-                final String password = AESEncryption.encrypt(txtPassword.getText().toString());
-                final String newPass = AESEncryption.encrypt(txtNewPass.getText().toString());
-                final String confirmPass = AESEncryption.encrypt(txtConfirmPass.getText().toString());
+                final String password = txtPassword.getText().toString();
+                final String newPass = txtNewPass.getText().toString();
+                final String confirmPass = txtConfirmPass.getText().toString();
 
-                if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
+                if (firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
                     showToast("Please fill out all fields.");
                 }
 
-                else if(!password.equals(defCurrentPass)){
-                    showToast("Invalid Current Password.");
+                else if(!defCurrentPass.equals(AESEncryption.encrypt(password))){
+                    showToast("Invalid current password.");
                 }
 
                 else if (!newPass.equals(confirmPass)){
                     showToast("Passwords do not match.");
                 }
 
+                else if (password.equals(newPass)){
+                    showToast("No password changes detected");
+                }
+
                 else{
                     final DatabaseReference student = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
                     student.child("firstName").setValue(firstName);
                     student.child("lastName").setValue(lastName);
-                    student.child("password").setValue(newPass);
+                    student.child("password").setValue(AESEncryption.encrypt(newPass));
 
                     showToast("Account updated successfully.");
                     clearPW();
