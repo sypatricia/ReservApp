@@ -17,12 +17,9 @@
         <activity android:name=".ActivityTransitInfo" />
         <activity android:name=".ActivityTransitList" />
         <activity android:name=".NavigationActivity" />
-        <activity android:name=".SchedulesActivity" />
         <activity android:name=".ShuttleActivity" />
         <activity android:name=".AccountRegisterActivity" />
         <activity android:name=".AccountLoginActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".PickUpsActivity" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
