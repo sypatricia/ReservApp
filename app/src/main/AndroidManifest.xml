@@ -13,13 +13,20 @@
         android:roundIcon="@mipmap/ic_reserv"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ActivityReservationAdd"/>
-        <activity android:name=".ActivityTransitInfo" />
-        <activity android:name=".ActivityTransitList" />
-        <activity android:name=".NavigationActivity" />
-        <activity android:name=".ShuttleActivity" />
-        <activity android:name=".AccountRegisterActivity" />
-        <activity android:name=".AccountLoginActivity" />
+        <activity android:name=".ActivityReservationAdd"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ActivityTransitInfo"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ActivityTransitList"
+            android:launchMode="singleTask"/>
+        <activity android:name=".NavigationActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".ShuttleActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".AccountRegisterActivity"
+            android:launchMode="singleTask"/>
+        <activity android:name=".AccountLoginActivity"
+            android:launchMode="singleTask"/>
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
