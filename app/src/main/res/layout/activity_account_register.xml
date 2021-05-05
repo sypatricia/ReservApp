@@ -132,18 +132,19 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="30dp"
         android:backgroundTint="@color/mclblue"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.!@#$%^*()-_=+{}[]|\;:'/?"
         android:fontFamily="@font/regular"
         android:hint="Confirm Password"
-        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,.!@#$%^*()-_=+{}[]|\;:'/?"
         android:inputType="textPassword"
+        android:maxLength="50"
         android:nextFocusForward="@+id/btnRegister"
         android:singleLine="true"
-        android:maxLength="50"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPassword"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnRegister"
@@ -159,10 +160,10 @@
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.862" />
+        app:layout_constraintTop_toBottomOf="@+id/txtConfirmPass"
+        app:layout_constraintVertical_bias="0.117" />
 
     <ImageView
         android:id="@+id/btnBack"
