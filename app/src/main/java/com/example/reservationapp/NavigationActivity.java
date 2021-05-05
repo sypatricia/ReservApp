@@ -29,4 +29,9 @@ public class NavigationActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
 
     }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }
