@@ -94,7 +94,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AccountRegisterActivity.this, AccountLoginActivity.class));
+                finish();
             }
         });
 
