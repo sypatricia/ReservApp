@@ -8,18 +8,12 @@
     android:gravity="bottom"
     tools:context=".ShuttleActivity">
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/frgMap"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <fragment
-            android:id="@+id/frgMap"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="400dp" />
-
-    </LinearLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
