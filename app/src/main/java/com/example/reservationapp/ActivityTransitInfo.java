@@ -127,7 +127,6 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                 if(dataSnapshot.child("status").exists()){
                                     inTransit = true;
                                     updateReserveButton();
-                                    ShowToast("not in transit");
                                     return;
                                 }
                                 else{
@@ -262,12 +261,12 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     void updateReserveButton(){
         if(inTransit){
-            btnReserve.setEnabled(false);
             btnReserve.setText("Shuttle in Transit");
-        }
-        if(reservedDiff){
             btnReserve.setEnabled(false);
+        }
+        else if(reservedDiff){
             btnReserve.setText("Reserved in another");
+            btnReserve.setEnabled(false);
         }
         else if(reservedHere){
             btnReserve.setText("Cancel Reservation");
