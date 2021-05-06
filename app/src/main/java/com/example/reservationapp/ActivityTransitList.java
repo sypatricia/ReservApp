@@ -47,7 +47,6 @@ public class ActivityTransitList extends AppCompatActivity {
 
         txtTime = findViewById(R.id.txtTime);
         lstTransits = findViewById(R.id.lstTransits);
-        spnStation = findViewById(R.id.spnStation);
         btnBack =  findViewById(R.id.btnBack);
 
         schedId = getIntent().getStringExtra("schedId");
