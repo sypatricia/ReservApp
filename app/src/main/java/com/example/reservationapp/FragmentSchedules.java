@@ -15,8 +15,11 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,6 +42,8 @@ public class FragmentSchedules extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    View rootView;
+
     ListView lstSchedules;
 
     String studentId;
@@ -46,6 +51,7 @@ public class FragmentSchedules extends Fragment {
     ArrayList<ScheduleModel> schedules = new ArrayList<>();
 
     DatabaseReference refSchedules;
+    ValueEventListener schedulesListener;
 
     FirebaseListOptions<ScheduleModel> options;
 
@@ -82,52 +88,77 @@ public class FragmentSchedules extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        populateList();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_schedules, container, false);
+        rootView = inflater.inflate(R.layout.fragment_schedules, container, false);
         lstSchedules = rootView.findViewById(R.id.lstSchedules);
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
         refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
+        populateList();
 
-        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedules.orderByChild("time"), ScheduleModel.class).setLayout(R.layout.list_item_schedule).build();
-
-        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
-            @Override
-            protected void populateView(@NonNull View v, @NonNull ScheduleModel model, int position) {
-
-                DatabaseReference itemRef = getRef(position);
-
-                TextView txtTime = v.findViewById(R.id.txtTime);
-
-                String time = model.getHour() + ":" +model.getMinute();
-
-                SimpleDateFormat f24hours = new SimpleDateFormat(
-                        "HH:mm"
-                );
-
-                final Date date;
-                try {
-                    date = f24hours.parse(time);
-
-                    final SimpleDateFormat f12hours = new SimpleDateFormat(
-                            "hh:mm aa"
-                    );
-
-                    final String time12hr = f12hours.format(date);
-
-                    txtTime.setText(time12hr);
-
-                    schedules.add(new ScheduleModel(itemRef.getKey(), model.getHour(), model.getMinute()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        firebaseListAdapter.startListening();
-        lstSchedules.setAdapter(firebaseListAdapter);
+//        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedules.orderByChild("time"), ScheduleModel.class).setLayout(R.layout.list_item_schedule).build();
+//
+//        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
+//            @Override
+//            protected void populateView(@NonNull View v, @NonNull ScheduleModel model, int position) {
+//
+//                DatabaseReference itemRef = getRef(position);
+//
+//                TextView txtTime = v.findViewById(R.id.txtTime);
+//
+//                String time = model.getHour() + ":" +model.getMinute();
+//
+//                SimpleDateFormat f24hours = new SimpleDateFormat(
+//                        "HH:mm"
+//                );
+//
+//                final Date date;
+//                try {
+//                    date = f24hours.parse(time);
+//
+//                    final SimpleDateFormat f12hours = new SimpleDateFormat(
+//                            "hh:mm aa"
+//                    );
+//
+//                    final String time12hr = f12hours.format(date);
+//
+//                    txtTime.setText(time12hr);
+//
+//                    schedules.add(new ScheduleModel(itemRef.getKey(), model.getHour(), model.getMinute()));
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//
+//        firebaseListAdapter.startListening();
+//        lstSchedules.setAdapter(firebaseListAdapter);
         lstSchedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -138,5 +169,72 @@ public class FragmentSchedules extends Fragment {
             }
         });
         return rootView;
+    }
+
+    void populateList(){
+
+        schedulesListener = refSchedules.orderByChild("time").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot scheduleSnapshot) {
+
+                if(scheduleSnapshot.exists()){
+                    schedules = new ArrayList<>();
+
+                    final ArrayList<ModelScheduleListItem> listitems = new ArrayList<>();
+
+                    for(DataSnapshot schedule: scheduleSnapshot.getChildren()){
+                        ScheduleModel model = new ScheduleModel();
+                        model.setId(schedule.getKey());
+
+                        if(schedule.child("hour").exists())
+                            model.setHour(Integer.valueOf(schedule.child("hour").getValue().toString()));
+                        else{
+                            model.setHour(0);
+                        }
+                        if(schedule.child("time").exists())
+                            model.setMinute(Integer.valueOf(schedule.child("minute").getValue().toString()));
+                        else{
+                            model.setMinute(0);
+                        }
+                        schedules.add(model);
+
+                        String time = model.getHour() + ":" +model.getMinute();
+
+                        SimpleDateFormat f24hours = new SimpleDateFormat(
+                                "HH:mm"
+                        );
+
+                        final Date date;
+                        try {
+                            date = f24hours.parse(time);
+
+                            final SimpleDateFormat f12hours = new SimpleDateFormat(
+                                    "hh:mm aa"
+                            );
+
+                            final String time12hr = f12hours.format(date);
+
+                            time = time12hr;
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        listitems.add(new ModelScheduleListItem(time));
+                        AdapterScheduleList adapterScheduleList = new AdapterScheduleList(rootView.getContext(), R.layout.list_item_schedule, listitems);
+                        lstSchedules.setAdapter(adapterScheduleList);
+                    }
+                }
+                else{
+                    lstSchedules.setAdapter(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }
