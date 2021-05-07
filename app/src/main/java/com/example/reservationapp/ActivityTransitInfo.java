@@ -37,19 +37,19 @@ public class ActivityTransitInfo extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        refTransit.orderByValue().removeEventListener(transitListener);
+        refTransit.removeEventListener(transitListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refTransit.orderByValue().removeEventListener(transitListener);
+        refTransit.removeEventListener(transitListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        refTransit.orderByValue().removeEventListener(transitListener);
+        refTransit.removeEventListener(transitListener);
     }
 
     @Override
