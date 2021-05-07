@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,7 @@ public class FragmentProfile extends Fragment {
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtNewPass, txtConfirmPass;
     String defFirstName, defLastName, defCurrentPass;
 
+    boolean isFirstNameChanged, isLastNameChanged, isPasswordChanged;
     String studentId;
 
     DatabaseReference student;
@@ -92,6 +95,11 @@ public class FragmentProfile extends Fragment {
         txtNewPass = rootView.findViewById(R.id.txtNewPass);
         txtConfirmPass = rootView.findViewById(R.id.txtConfirmPass2);
 
+        // Flags
+        isFirstNameChanged = false;
+        isLastNameChanged = false;
+        isPasswordChanged = false;
+
         studentId = getActivity().getIntent().getStringExtra("studentId");
         txtStudentId.setText(studentId);
 
@@ -116,35 +124,84 @@ public class FragmentProfile extends Fragment {
             public void onClick(View v) {
                 final String firstName = txtFirstName.getText().toString();
                 final String lastName = txtLastName.getText().toString();
-
                 final String password = txtPassword.getText().toString();
                 final String newPass = txtNewPass.getText().toString();
                 final String confirmPass = txtConfirmPass.getText().toString();
 
-                if (firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
-                    showToast("Please fill out all fields.");
+                boolean isUpdated = false;
+
+                updateChanges(firstName,lastName,password,newPass,confirmPass);
+                clearTextBoxErrors();
+
+                if (!isFirstNameChanged && !isLastNameChanged && !isPasswordChanged) {
+                    txtFirstName.setError("No Changes in the First Name and Last Name");
+                    txtLastName.setError("No Changes in the First Name and Last Name");
+                    txtFirstName.requestFocus();
                 }
 
-                else if(!defCurrentPass.equals(AESEncryption.encrypt(password))){
-                    showToast("Invalid current password.");
-                }
+                else {
+                    if (isFirstNameChanged && firstName.isEmpty()){
+                        txtFirstName.setError("First Name cannot be empty.");
+                        txtFirstName.requestFocus();
+                    }
 
-                else if (!newPass.equals(confirmPass)){
-                    showToast("Passwords do not match.");
-                }
+                    if (isLastNameChanged && lastName.isEmpty()){
+                        txtLastName.setError("Last Name cannot be empty.");
+                        txtLastName.requestFocus();
+                    }
 
-                else if (password.equals(newPass)){
-                    showToast("No password changes detected");
-                }
+                    if (isPasswordChanged) {
 
-                else{
+                        if(!defCurrentPass.equals(AESEncryption.encrypt(password))){
+                            txtPassword.setError("Invalid current password.");
+                            txtPassword.requestFocus();
+                        }
+
+                        else if (newPass.isEmpty()) {
+                            txtNewPass.setError("New Password cannot be empty.");
+                            txtNewPass.requestFocus();
+                        }
+
+                        else if (!newPass.equals(confirmPass)){
+                            txtNewPass.setError("Passwords do not match.");
+                            txtConfirmPass.setError("Passwords do not match.");
+                            txtConfirmPass.requestFocus();
+                        }
+
+                        else if (password.equals(newPass)){
+                            txtPassword.setError("No password changes detected.");
+                            txtNewPass.setError("No password changes detected.");
+                            txtNewPass.requestFocus();
+                        }
+                    }
+
                     final DatabaseReference student = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
-                    student.child("firstName").setValue(firstName);
-                    student.child("lastName").setValue(lastName);
-                    student.child("password").setValue(AESEncryption.encrypt(newPass));
 
-                    showToast("Account updated successfully.");
-                    clearPW();
+                    if (txtFirstName.getError() == null && txtLastName.getError() == null) {
+                        student.child("firstName").setValue(firstName);
+                        student.child("lastName").setValue(lastName);
+
+                        if (isFirstNameChanged || isLastNameChanged) {
+                            isUpdated = true;
+                        }
+                    }
+
+                    if (isPasswordChanged && txtPassword.getError() == null && txtNewPass.getError() == null && txtConfirmPass.getError() == null) {
+
+                        if ((isLastNameChanged && txtLastName.getError() != null)
+                                || (isFirstNameChanged && txtFirstName.getError() != null)
+                        ) {
+                            return;
+                        }
+                        student.child("password").setValue(AESEncryption.encrypt(newPass));
+                        isUpdated = true;
+                        clearPW();
+                    }
+
+                    if (isUpdated) {
+                        showToast("Account updated successfully.");
+                    }
+
                 }
             }
         });
@@ -166,6 +223,37 @@ public class FragmentProfile extends Fragment {
         txtPassword.setText("");
         txtNewPass.setText("");
         txtConfirmPass.setText("");
+    }
+
+    void clearTextBoxErrors(){
+        txtFirstName.setError(null);
+        txtLastName.setError(null);
+        txtPassword.setError(null);
+        txtNewPass.setError(null);
+        txtConfirmPass.setError(null);
+    }
+
+    void updateChanges(String firstName, String lastName, String password, String newPassword, String confirmPassword){
+        if(!firstName.equals(defFirstName)) {
+            isFirstNameChanged = true;
+        }
+        else{
+            isFirstNameChanged = false;
+        }
+
+        if(!lastName.equals(defLastName)) {
+            isLastNameChanged = true;
+        }
+        else {
+            isLastNameChanged = false;
+        }
+
+        if(!password.isEmpty() || !newPassword.isEmpty() || !confirmPassword.isEmpty()) {
+            isPasswordChanged = true;
+        }
+        else{
+            isPasswordChanged = false;
+        }
     }
 
     void showToast(String message){ Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show(); }

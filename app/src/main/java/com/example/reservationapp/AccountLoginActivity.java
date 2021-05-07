@@ -52,10 +52,14 @@ public class AccountLoginActivity extends AppCompatActivity {
                 //get current values in text field
                 final String studentId = txtStudentId.getText().toString();
                 final String pass = txtPassword.getText().toString();
+                clearErrors();
 
                 if (studentId.isEmpty() || pass.isEmpty()){
-                    ShowToast("Please enter your Student Number and Password.");
+                    txtStudentId.setError("Please enter your Student Number and Password.");
+                    txtPassword.setError("Please enter your Student Number and Password.");
+                    txtStudentId.requestFocus();
                 }
+
                 else{
                     //gets database reference of students
                     DatabaseReference refStudents = FirebaseDatabase.getInstance().getReference("Students");
@@ -63,11 +67,15 @@ public class AccountLoginActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             //check if students has someone with that stud id
-                            if (!dataSnapshot.hasChild(studentId))
-                                ShowToast("The account does not exist.");
+                            if (!dataSnapshot.hasChild(studentId)){
+                                txtStudentId.setError("The account does not exist.");
+                                txtStudentId.requestFocus();
+                            }
                             //check if passwords match
-                            else if (!dataSnapshot.child(studentId).child("password").getValue().toString().equals(AESEncryption.encrypt(pass)))
-                                ShowToast("Incorrect credentials entered.");
+                            else if (!dataSnapshot.child(studentId).child("password").getValue().toString().equals(AESEncryption.encrypt(pass))) {
+                                txtPassword.setError("Incorrect credentials entered.");
+                                txtPassword.requestFocus();
+                            }
                             else {
                                 ShowToast("Login successful.");
 
@@ -91,6 +99,10 @@ public class AccountLoginActivity extends AppCompatActivity {
 
     void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 
+    void clearErrors() {
+        txtStudentId.setError(null);
+        txtPassword.setError(null);
+    }
     private class NumericKeyBoardTransformationMethod extends PasswordTransformationMethod {
         @Override
         public CharSequence getTransformation(CharSequence source, View view) {

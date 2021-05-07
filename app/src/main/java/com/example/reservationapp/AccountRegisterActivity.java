@@ -19,11 +19,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AccountRegisterActivity extends AppCompatActivity {
 
     Button btnRegister;
     ImageView btnBack;
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtConfirmPass;
+    List<EditText> textBoxes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,13 @@ public class AccountRegisterActivity extends AppCompatActivity {
         txtConfirmPass = findViewById(R.id.txtConfirmPass);
         btnBack = findViewById(R.id.btnBack);
 
+        textBoxes = new ArrayList<>();
+        textBoxes.add(txtStudentId);
+        textBoxes.add(txtFirstName);
+        textBoxes.add(txtLastName);
+        textBoxes.add(txtPassword);
+        textBoxes.add(txtConfirmPass);
+
         txtStudentId.setTransformationMethod(new NumericKeyBoardTransformationMethod());
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -49,18 +60,22 @@ public class AccountRegisterActivity extends AppCompatActivity {
                 final String lastName = txtLastName.getText().toString();
                 final String password = txtPassword.getText().toString();
                 final String confirmPass = txtConfirmPass.getText().toString();
+                clearErrors();
+
 
                 if (studentId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || password.isEmpty() || confirmPass.isEmpty()){
-                    showToast("All fields are required.");
+                    checkIfEmpty();
                 }
 
                 else if(studentId.length()!=10){
-
-                    showToast("Invalid Student Number.");
+                    txtStudentId.setError("Student Number must have 10 digits");
+                    txtStudentId.requestFocus();
                 }
 
                 else if (!password.equals(confirmPass)){
-                    showToast("Passwords do not match.");
+                    txtPassword.setError("Passwords do not match.");
+                    txtConfirmPass.setError("Passwords do not match.");
+                    txtConfirmPass.requestFocus();
                 }
                 else{
                     final DatabaseReference students = FirebaseDatabase.getInstance().getReference("Students");
@@ -68,7 +83,8 @@ public class AccountRegisterActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(studentId)) {
-                                showToast("That student already exists.");
+                                txtStudentId.setError("Student Id already exists");
+                                txtStudentId.requestFocus();
                             }
                             else {
                                 DatabaseReference student = students.child(studentId);
@@ -89,7 +105,7 @@ public class AccountRegisterActivity extends AppCompatActivity {
                 }
             }
         });
-                //startActivity(new Intent(AccountRegisterActivity.this, AccountLoginActivity.class));
+        //startActivity(new Intent(AccountRegisterActivity.this, AccountLoginActivity.class));
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +117,22 @@ public class AccountRegisterActivity extends AppCompatActivity {
     }
 
     void showToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
+
+    void checkIfEmpty() {
+        for (EditText txtBox : textBoxes) {
+            if(txtBox.getText().toString().isEmpty()) {
+                txtBox.setError("This field is required");
+                txtBox.requestFocus();
+            }
+        }
+
+    }
+
+    void clearErrors(){
+        for (EditText txtBox : textBoxes) {
+            txtBox.setError(null);
+        }
+    }
 
     private class NumericKeyBoardTransformationMethod extends PasswordTransformationMethod {
         @Override
