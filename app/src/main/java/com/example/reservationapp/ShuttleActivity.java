@@ -83,11 +83,36 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refStudent;
     DatabaseReference refTransit;
     DatabaseReference refSchedule;
+    ValueEventListener locationListener;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallBack;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startListening();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refLocation.orderByValue().removeEventListener(locationListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        refLocation.orderByValue().removeEventListener(locationListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        refLocation.orderByValue().removeEventListener(locationListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,35 +151,152 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         //refReservations = refRoot.child("Reservations/" + id);
         refStudent = refRoot.child("Students/" + studentId);
 
-//        refStudent.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                studentName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-//
-//                if(!dataSnapshot.hasChild("reserved")) {//if student is not reserved to anyone
-//                    reserved = false;
-//                    reservedInOther = false;
-//                }
-//                else {
-//                    reserved = true;
-//                    if(dataSnapshot.child("reserved").getValue().toString().equals(id)){
-//                        reservedInOther = false;
-//                    }
-//                    else
-//                        reservedInOther = true;
-//                }
-//
-//
-//                updateInfo();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+        startListening();
 
-        refLocation.addValueEventListener(new ValueEventListener() {
+        refDriver.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                driverName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+                capacity = Integer.valueOf(dataSnapshot.child("capacity").getValue().toString());
+                updateInfo();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        locationCallBack = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                updateReserveLocation(locationResult.getLastLocation());
+            }
+        };
+
+        btnReserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                if(!reserved){
+                    if(reservations >= capacity){
+                        Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        refTransit.child("reservations").child(studentId).setValue("Reserved");
+                        refStudent.child("reservations").child(transitId).setValue(hour);
+                        reserved = true;
+                        Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else{
+                    refTransit.child("reservations").child(studentId).removeValue();
+                    refStudent.child("reservations").child(transitId).removeValue();
+                    reserved = false;
+                    Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
+                }
+
+                updateInfo();
+                startListening();
+
+
+            }
+        });
+
+        updateGPS();
+    }//end of onCreate
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        gMap = googleMap;
+
+        gMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(locationLatitude,locationLongitude) , 16f) );
+
+        updateMarkers();
+    }
+
+    private void startLocationUpdates() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
+        updateGPS();
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
+    }
+
+    private void updateGPS(){
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(ShuttleActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            //user provided permission
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    updateReserveLocation(location);
+                }
+            });
+        }
+        else{
+            //permission not granted yet
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PEMISSIONS_FINE_LOCATION);
+            }
+        }
+    }
+
+    private void updateReserveLocation(Location location){
+        //update student in firebase database
+
+        final double latitude = location.getLatitude();
+        final double longitude = location.getLongitude();
+        final float accuracy = location.getAccuracy();
+        String altitude;
+        String speed;
+        String address;
+
+        if(location.hasAltitude()){
+            altitude = String.valueOf(location.getAltitude());
+        }
+        else altitude = "Not Available";
+
+        if(location.hasSpeed()){
+            speed = String.valueOf(location.getSpeed());
+        }
+        else speed = "Not Available";
+
+        Geocoder geocoder = new Geocoder(ShuttleActivity.this);
+
+        try{
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            address = addresses.get(0).getAddressLine(0);
+        }
+        catch (Exception e){
+            address = "Unable to get street address";
+        }
+
+//        if(reserved){
+//            refReservations.child(studentId).child("latitude").setValue(latitude);
+//            refReservations.child(studentId).child("longitude").setValue(longitude);
+//            refReservations.child(studentId).child("accuracy").setValue(accuracy);
+//            refReservations.child(studentId).child("altitude").setValue(altitude);
+//            refReservations.child(studentId).child("speed").setValue(speed);
+//            refReservations.child(studentId).child("address").setValue(address);
+//        }
+
+    }
+
+    public void startListening(){
+        locationListener = refLocation.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.hasChild("latitude")){
@@ -206,7 +348,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                             }
                         });
 
-                        refTransit.addValueEventListener(new ValueEventListener() {
+                        refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
@@ -267,7 +409,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                         }
 
 
-                                        refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                                        refStudent.child("reservations").addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
 
@@ -357,183 +499,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
             }
         });
-
-        refDriver.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                driverName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-                capacity = Integer.valueOf(dataSnapshot.child("capacity").getValue().toString());
-                updateInfo();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-//        refReservations.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                reservations = (int)dataSnapshot.getChildrenCount();
-//                if(!dataSnapshot.hasChild(studentId)){
-//                    reserved = false;
-//                    reservedInOther = false;
-//                    refStudent.child("reserved").removeValue();
-//                }
-//                updateInfo();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(1000 * DEFAULT_UPDATE_INTERVAL);
-        locationRequest.setFastestInterval(1000 * FASTEST_UPDATE_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-        locationCallBack = new LocationCallback(){
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                updateReserveLocation(locationResult.getLastLocation());
-            }
-        };
-
-        btnReserve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                if(status.equals("Waiting")){
-//                    if(!reserved){//if student clicks reserve
-//                        refReservations.child(studentId).child("name").setValue(studentName);
-//                        refStudent.child("reserved").setValue(id);
-//                        startLocationUpdates();
-//
-//                        Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                    else{//if student clicks cancel
-//                        stopLocationUpdates();
-//                        refReservations.child(studentId).removeValue();
-//                        refStudent.child("reserved").removeValue();
-//
-//                        Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                    updateInfo();
-//                }
-
-
-            if(!reserved){
-                if(reservations >= capacity){
-                    Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    refTransit.child("reservations").child(studentId).setValue("Reserved");
-                    refStudent.child("reservations").child(transitId).setValue(hour);
-                    reserved = true;
-                    Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
-                }
-            }
-            else{
-                refTransit.child("reservations").child(studentId).removeValue();
-                refStudent.child("reservations").child(transitId).removeValue();
-                reserved = false;
-                Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
-            }
-
-                updateInfo();
-
-
-            }
-        });
-
-        updateGPS();
-    }//end of onCreate
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        gMap = googleMap;
-
-        gMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(locationLatitude,locationLongitude) , 16f) );
-
-        updateMarkers();
-    }
-
-    private void startLocationUpdates() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null);
-        updateGPS();
-    }
-
-    private void stopLocationUpdates() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
-    }
-
-    private void updateGPS(){
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(ShuttleActivity.this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            //user provided permission
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    updateReserveLocation(location);
-                }
-            });
-        }
-        else{
-            //permission not granted yet
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PEMISSIONS_FINE_LOCATION);
-            }
-        }
-    }
-
-    private void updateReserveLocation(Location location){
-        //update student in firebase database
-
-        final double latitude = location.getLatitude();
-        final double longitude = location.getLongitude();
-        final float accuracy = location.getAccuracy();
-        String altitude;
-        String speed;
-        String address;
-
-        if(location.hasAltitude()){
-            altitude = String.valueOf(location.getAltitude());
-        }
-        else altitude = "Not Available";
-
-        if(location.hasSpeed()){
-            speed = String.valueOf(location.getSpeed());
-        }
-        else speed = "Not Available";
-
-        Geocoder geocoder = new Geocoder(ShuttleActivity.this);
-
-        try{
-            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-            address = addresses.get(0).getAddressLine(0);
-        }
-        catch (Exception e){
-            address = "Unable to get street address";
-        }
-
-//        if(reserved){
-//            refReservations.child(studentId).child("latitude").setValue(latitude);
-//            refReservations.child(studentId).child("longitude").setValue(longitude);
-//            refReservations.child(studentId).child("accuracy").setValue(accuracy);
-//            refReservations.child(studentId).child("altitude").setValue(altitude);
-//            refReservations.child(studentId).child("speed").setValue(speed);
-//            refReservations.child(studentId).child("address").setValue(address);
-//        }
-
     }
 
     public void updateInfo(){
