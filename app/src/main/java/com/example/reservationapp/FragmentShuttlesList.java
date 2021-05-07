@@ -264,6 +264,4 @@ public class FragmentShuttlesList extends Fragment {
 
     }
 
-    void ShowToast(String message){ Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show(); }
-
 }
