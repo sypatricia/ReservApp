@@ -32,6 +32,25 @@ public class ActivityTransitInfo extends AppCompatActivity {
     boolean reservedHere = false, reservedDiff = false, inTransit = false;
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
+    ValueEventListener transitListener;
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refTransit.orderByValue().removeEventListener(transitListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        refTransit.orderByValue().removeEventListener(transitListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        refTransit.orderByValue().removeEventListener(transitListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +79,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         refSchedule = refRoot.child("Schedules/" + schedId);
         refStations = refRoot.child("Stations");
 
-        refTransit.addValueEventListener(new ValueEventListener() {
+        transitListener = refTransit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 resCount = (int)dataSnapshot.child("reservations").getChildrenCount();
@@ -73,7 +92,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         });
 
-        refDriver.addValueEventListener(new ValueEventListener() {
+        refDriver.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
@@ -89,7 +108,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         });
 
-        refSchedule.addValueEventListener(new ValueEventListener() {
+        refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 //                int h = (int)dataSnapshot.child("hour").getValue();
@@ -115,7 +134,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
                 }
 
 
-                refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                refStudent.child("reservations").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
 
@@ -183,7 +202,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         });
 
-        refStations.addValueEventListener(new ValueEventListener() {
+        refStations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String from = dataSnapshot.child(fromId).child("name").getValue().toString();
