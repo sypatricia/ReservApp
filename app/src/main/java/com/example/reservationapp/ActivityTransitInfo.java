@@ -206,14 +206,17 @@ public class ActivityTransitInfo extends AppCompatActivity {
             public void onClick(View view) {
                 //todo: add checking of waiting/intransit status if transit is current transit
 
-                if(resCount >= capCount){
-                    Toast.makeText(ActivityTransitInfo.this,"This shuttle is full", Toast.LENGTH_LONG).show();
-                }
-                else if(!reservedHere){
-                    refTransit.child("reservations").child(studentId).setValue(hour);
-                    refStudent.child("reservations").child(transitId).setValue(hour);
-                    reservedHere = true;
-                    Toast.makeText(ActivityTransitInfo.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+
+                if(!reservedHere){
+                    if(resCount >= capCount){
+                        Toast.makeText(ActivityTransitInfo.this,"This shuttle is full", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        refTransit.child("reservations").child(studentId).setValue(hour);
+                        refStudent.child("reservations").child(transitId).setValue(hour);
+                        reservedHere = true;
+                        Toast.makeText(ActivityTransitInfo.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+                    }
                 }
                 else{
                     refTransit.child("reservations").child(studentId).removeValue();
@@ -270,9 +273,17 @@ public class ActivityTransitInfo extends AppCompatActivity {
         }
         else if(reservedHere){
             btnReserve.setText("Cancel Reservation");
+            btnReserve.setEnabled(true);
         }
         else {
-            btnReserve.setText("Make Reservation");
+            if(resCount >= capCount){
+                btnReserve.setEnabled(false);
+                btnReserve.setText("Full");
+            }
+            else{
+                btnReserve.setEnabled(true);
+                btnReserve.setText("Make Reservation");
+            }
         }
 
     }
