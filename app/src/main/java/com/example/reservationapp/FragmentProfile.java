@@ -40,6 +40,8 @@ public class FragmentProfile extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    View rootView;
+
     Button btnSave, btnLogout;
     EditText txtStudentId, txtFirstName, txtLastName, txtPassword, txtNewPass, txtConfirmPass;
     String defFirstName, defLastName, defCurrentPass;
@@ -84,7 +86,7 @@ public class FragmentProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         txtStudentId = rootView.findViewById(R.id.txtStudentId2);
         txtFirstName = rootView.findViewById(R.id.txtFirstName2);
@@ -256,5 +258,5 @@ public class FragmentProfile extends Fragment {
         }
     }
 
-    void showToast(String message){ Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show(); }
+    void showToast(String message){ Toast.makeText(rootView.getContext(), message, Toast.LENGTH_SHORT).show(); }
 }
