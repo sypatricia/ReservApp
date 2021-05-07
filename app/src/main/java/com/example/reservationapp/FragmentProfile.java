@@ -106,21 +106,8 @@ public class FragmentProfile extends Fragment {
         txtStudentId.setText(studentId);
 
         student = FirebaseDatabase.getInstance().getReference("Students/" + studentId);
-        student.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                defFirstName = dataSnapshot.child("firstName").getValue().toString();
-                defLastName = dataSnapshot.child("lastName").getValue().toString();
-                defCurrentPass = dataSnapshot.child("password").getValue().toString();
-                txtFirstName.setText(defFirstName);
-                txtLastName.setText(defLastName);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        populateFields();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -202,6 +189,7 @@ public class FragmentProfile extends Fragment {
 
                     if (isUpdated) {
                         showToast("Account updated successfully.");
+                        populateFields();
                     }
 
                 }
@@ -256,6 +244,24 @@ public class FragmentProfile extends Fragment {
         else{
             isPasswordChanged = false;
         }
+    }
+
+    void populateFields(){
+        student.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                defFirstName = dataSnapshot.child("firstName").getValue().toString();
+                defLastName = dataSnapshot.child("lastName").getValue().toString();
+                defCurrentPass = dataSnapshot.child("password").getValue().toString();
+                txtFirstName.setText(defFirstName);
+                txtLastName.setText(defLastName);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     void showToast(String message){ Toast.makeText(rootView.getContext(), message, Toast.LENGTH_SHORT).show(); }
