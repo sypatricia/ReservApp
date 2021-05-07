@@ -91,12 +91,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     LocationCallback locationCallBack;
 
     @Override
-    public void onResume() {
-        super.onResume();
-        startListening();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         refLocation.orderByValue().removeEventListener(locationListener);
