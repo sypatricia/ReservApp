@@ -54,10 +54,14 @@ public class AccountLoginActivity extends AppCompatActivity {
                 final String pass = txtPassword.getText().toString();
                 clearErrors();
 
-                if (studentId.isEmpty() || pass.isEmpty()){
-                    txtStudentId.setError("Please enter your Student Number and Password.");
-                    txtPassword.setError("Please enter your Student Number and Password.");
+                if (studentId.isEmpty()){
+                    txtStudentId.setError("Please enter your Student Number.");
                     txtStudentId.requestFocus();
+                }
+
+                else if (pass.isEmpty()){
+                    txtPassword.setError("Please enter your Password.");
+                    txtPassword.requestFocus();
                 }
 
                 else{
