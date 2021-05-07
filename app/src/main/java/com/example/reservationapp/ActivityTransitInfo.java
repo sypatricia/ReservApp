@@ -212,7 +212,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
                         Toast.makeText(ActivityTransitInfo.this,"This shuttle is full", Toast.LENGTH_LONG).show();
                     }
                     else{
-                        refTransit.child("reservations").child(studentId).setValue(hour);
+                        refTransit.child("reservations").child(studentId).setValue("Reserved");
                         refStudent.child("reservations").child(transitId).setValue(hour);
                         reservedHere = true;
                         Toast.makeText(ActivityTransitInfo.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
@@ -260,6 +260,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
     void UpdateResCap(){
         String resCap = resCount + "/" + capCount;
         txtReserved.setText(resCap);
+        updateReserveButton();
     }
 
     void updateReserveButton(){
