@@ -23,7 +23,16 @@
         android:fontFamily="@font/regular"
         android:textSize="16dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginBottom="12dp"/>
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Destination:"
+        android:fontFamily="@font/regular"
+        android:textSize="14dp"
+        android:textColor="@color/mclblue"
+        android:layout_marginLeft="20dp"/>
 
     <TextView
         android:id="@+id/txtDestination"
