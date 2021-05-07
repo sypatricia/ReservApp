@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -33,12 +34,38 @@ public class ActivityTransitList extends AppCompatActivity {
     ImageView btnBack;
 
     String studentId, schedId;
+    int count = 0, counter = 0;
 
     DatabaseReference refRoot, refTransits, refSchedule, refDesinations, refDriver;
+    ValueEventListener transitListener;
 
     FirebaseListOptions<ScheduleModel> options;
 
     ArrayList<ModelTransit> arrTansits = new ArrayList<>();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateList();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,88 +85,90 @@ public class ActivityTransitList extends AppCompatActivity {
         refSchedule = refRoot.child("Schedules/" + schedId);
         refDesinations = refRoot.child("Stations");
 
-        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedule.child("transits"), ScheduleModel.class).setLayout(R.layout.list_item_transit).build();
+        populateList();
 
-        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
-            @Override
-            protected void populateView(@NonNull View v, @NonNull final ScheduleModel sched, int position) {
+//        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedule.child("transits"), ScheduleModel.class).setLayout(R.layout.list_item_transit).build();
+//
+//        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
+//            @Override
+//            protected void populateView(@NonNull View v, @NonNull final ScheduleModel sched, int position) {
+//
+//                DatabaseReference itemRef = getRef(position);
+//
+//                final ModelTransit modelTransit = new ModelTransit();
+//                modelTransit.setId(itemRef.getKey());
+//
+//                final TextView txtName = v.findViewById(R.id.txtName);
+//                final TextView txtFrom = v.findViewById(R.id.txtFrom);
+//                final TextView txtTo = v.findViewById(R.id.txtTo);
+//
+//                refTransits.child(itemRef.getKey()).addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                        if(dataSnapshot.exists()){
+//
+//                            modelTransit.setDriver(dataSnapshot.child("driver").getValue().toString());
+//                            modelTransit.setFrom(dataSnapshot.child("from").getValue().toString());
+//                            modelTransit.setTo(dataSnapshot.child("to").getValue().toString());
+//                            modelTransit.setSched(dataSnapshot.child("sched").getValue().toString());
+//
+//                            refDriver.child(modelTransit.getDriver()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                                    String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+//
+//                                    txtName.setText(name);
+//
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError error) {
+//                                    //ShowToast("Failed to read database");
+//                                }
+//                            });
+//
+//                            refDesinations.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                                    if(dataSnapshot.exists()){
+//
+//                                        String from =  dataSnapshot.child(modelTransit.getFrom()).child("name").getValue().toString();
+//                                        String to =  dataSnapshot.child(modelTransit.getTo()).child("name").getValue().toString();
+//
+//                                        txtFrom.setText(from);
+//                                        txtTo.setText(to);
+//
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(DatabaseError error) {
+//                                    //ShowToast("Failed to read database");
+//                                }
+//                            });
+//
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//                arrTansits.add(modelTransit);
+//
+//            }
+//        };
+//
+//        firebaseListAdapter.startListening();
+//        lstTransits.setAdapter(firebaseListAdapter);
 
-                DatabaseReference itemRef = getRef(position);
-
-                final ModelTransit modelTransit = new ModelTransit();
-                modelTransit.setId(itemRef.getKey());
-
-                final TextView txtName = v.findViewById(R.id.txtName);
-                final TextView txtFrom = v.findViewById(R.id.txtFrom);
-                final TextView txtTo = v.findViewById(R.id.txtTo);
-
-                refTransits.child(itemRef.getKey()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        if(dataSnapshot.exists()){
-
-                            modelTransit.setDriver(dataSnapshot.child("driver").getValue().toString());
-                            modelTransit.setFrom(dataSnapshot.child("from").getValue().toString());
-                            modelTransit.setTo(dataSnapshot.child("to").getValue().toString());
-                            modelTransit.setSched(dataSnapshot.child("sched").getValue().toString());
-
-                            refDriver.child(modelTransit.getDriver()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-
-                                    txtName.setText(name);
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    //ShowToast("Failed to read database");
-                                }
-                            });
-
-                            refDesinations.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                    if(dataSnapshot.exists()){
-
-                                        String from =  dataSnapshot.child(modelTransit.getFrom()).child("name").getValue().toString();
-                                        String to =  dataSnapshot.child(modelTransit.getTo()).child("name").getValue().toString();
-
-                                        txtFrom.setText(from);
-                                        txtTo.setText(to);
-
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError error) {
-                                    //ShowToast("Failed to read database");
-                                }
-                            });
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-                arrTansits.add(modelTransit);
-
-            }
-        };
-
-        firebaseListAdapter.startListening();
-        lstTransits.setAdapter(firebaseListAdapter);
-
-        refSchedule.addValueEventListener(new ValueEventListener() {
+        refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String time =  dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
@@ -185,4 +214,94 @@ public class ActivityTransitList extends AppCompatActivity {
         });
 
     }
+
+    void populateList(){
+        transitListener = refSchedule.child("transits").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot transitSnapshot) {
+                if(transitSnapshot.exists()){
+                    count = (int)transitSnapshot.getChildrenCount();
+                    counter = 0;
+                    arrTansits = new ArrayList<>();
+
+                    final ArrayList<ModelTransitListItem> listitems = new ArrayList<>();
+
+                    for(DataSnapshot transit : transitSnapshot.getChildren()){
+
+                        final ModelTransit modelTransit = new ModelTransit();
+                        modelTransit.setId(transit.getKey());
+
+                        refTransits.child(modelTransit.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    modelTransit.setDriver(dataSnapshot.child("driver").getValue().toString());
+                                    modelTransit.setFrom(dataSnapshot.child("from").getValue().toString());
+                                    modelTransit.setTo(dataSnapshot.child("to").getValue().toString());
+                                    modelTransit.setSched(dataSnapshot.child("sched").getValue().toString());
+                                    arrTansits.add(modelTransit);
+
+                                    refDriver.child(modelTransit.getDriver()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                final String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+
+                                                refDesinations.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                        if(dataSnapshot.exists()){
+
+                                                            String from =  dataSnapshot.child(modelTransit.getFrom()).child("name").getValue().toString();
+                                                            String to =  dataSnapshot.child(modelTransit.getTo()).child("name").getValue().toString();
+
+                                                            listitems.add(new ModelTransitListItem(from, to, name));
+
+                                                            counter++;
+                                                            if(count == counter) {
+                                                                AdapterTransitList adapterTransitList = new AdapterTransitList(ActivityTransitList.this, R.layout.list_item_transit, listitems);
+                                                                lstTransits.setAdapter(adapterTransitList);
+                                                            }
+
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError error) {
+                                                        //ShowToast("Failed to read database");
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+                else{
+                    lstTransits.setAdapter(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
 }
