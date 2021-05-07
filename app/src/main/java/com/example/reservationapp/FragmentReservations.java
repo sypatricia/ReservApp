@@ -123,7 +123,7 @@ public class FragmentReservations extends Fragment {
 
         lstReservations = rootView.findViewById(R.id.lstReservations);
 
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+//        FloatingActionButton fab = rootView.findViewById(R.id.fab);
 
         studentId = getActivity().getIntent().getStringExtra("studentId");
 
@@ -260,14 +260,14 @@ public class FragmentReservations extends Fragment {
             }
         });
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ActivityReservationAdd.class);
-                intent.putExtra("studentId", studentId);
-                startActivity(intent);
-            }
-        });
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent = new Intent(getActivity(), ActivityReservationAdd.class);
+////                intent.putExtra("studentId", studentId);
+////                startActivity(intent);
+//            }
+//        });
 
         return rootView;
     }
