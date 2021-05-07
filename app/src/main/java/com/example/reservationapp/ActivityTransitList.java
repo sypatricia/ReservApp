@@ -52,19 +52,19 @@ public class ActivityTransitList extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+        refSchedule.child("transits").removeEventListener(transitListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+        refSchedule.child("transits").removeEventListener(transitListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        refSchedule.child("transits").orderByValue().removeEventListener(transitListener);
+        refSchedule.child("transits").removeEventListener(transitListener);
     }
 
     @Override
