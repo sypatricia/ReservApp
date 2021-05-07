@@ -164,179 +164,189 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                     destinationId = dataSnapshot.child("destination").getValue().toString();
                     fromId = dataSnapshot.child("from").getValue().toString();
                     status = dataSnapshot.child("status").getValue().toString();
-                    final DatabaseReference destination = refRoot.child("Stations/"+ fromId);
-                    final DatabaseReference from = refRoot.child("Stations/"+ destinationId);
+                    final DatabaseReference destination = refRoot.child("Stations/"+ destinationId);
+                    final DatabaseReference from = refRoot.child("Stations/"+ fromId);
                     transitId = dataSnapshot.child("transit").getValue().toString();
                     refTransit = refRoot.child("Transits").child(transitId);
 
-                    destination.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            destinationName = dataSnapshot.child("name").getValue().toString();
-                            destinationLatitude = Double.valueOf(dataSnapshot.child("latitude").getValue().toString());
-                            destinationLongitude = Double.valueOf(dataSnapshot.child("longitude").getValue().toString());
-                            destinationLocation = new LatLng(destinationLatitude, destinationLongitude);
-                            updateInfo();
-                            updateMarkers();
-                        }
+                    if(transitId.equals("none")){
+                        fromName = "";
+                        destinationName = "";
+                        estimated = "";
+                    }
+                    else{
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        destination.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                destinationName = dataSnapshot.child("name").getValue().toString();
+                                destinationLatitude = Double.valueOf(dataSnapshot.child("latitude").getValue().toString());
+                                destinationLongitude = Double.valueOf(dataSnapshot.child("longitude").getValue().toString());
+                                destinationLocation = new LatLng(destinationLatitude, destinationLongitude);
+                                updateInfo();
+                                updateMarkers();
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    from.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            fromName = dataSnapshot.child("name").getValue().toString();
-                            updateInfo();
-                        }
+                            }
+                        });
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                        from.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                fromName = dataSnapshot.child("name").getValue().toString();
+                                updateInfo();
+                            }
 
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    refTransit.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
-                            updateInfo();
+                            }
+                        });
 
-                            String schedId = dataSnapshot.child("sched").getValue().toString();
+                        refTransit.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
+                                updateInfo();
 
-                            refSchedule = refRoot.child("Schedules").child(schedId);
+                                String schedId = dataSnapshot.child("sched").getValue().toString();
 
-                            refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    int h = Integer.valueOf(dataSnapshot.child("hour").getValue().toString()) ;
-                                    int m = Integer.valueOf(dataSnapshot.child("minute").getValue().toString());
+                                refSchedule = refRoot.child("Schedules").child(schedId);
 
-                                    if(status.equals("Waiting")){
-                                        Date currentTime = Calendar.getInstance().getTime();
-                                        Calendar cal = Calendar.getInstance();
-                                        cal.setTime(currentTime);
-                                        int currentHours = cal.get(Calendar.HOUR_OF_DAY);
-                                        int currentMins = cal.get(Calendar.MINUTE);
+                                refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        int h = Integer.valueOf(dataSnapshot.child("hour").getValue().toString()) ;
+                                        int m = Integer.valueOf(dataSnapshot.child("minute").getValue().toString());
+
+                                        if(status.equals("Waiting")){
+                                            Date currentTime = Calendar.getInstance().getTime();
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.setTime(currentTime);
+                                            int currentHours = cal.get(Calendar.HOUR_OF_DAY);
+                                            int currentMins = cal.get(Calendar.MINUTE);
 
 //                                        int estHrs = h - currentHours;
 //                                        int estMins = m - currentMins;
 
-                                        estimated = "ETD " + (((h*60) + m) - ((currentHours*60) + currentMins)) + " min(s)";
+                                            estimated = "ETD " + (((h*60) + m) - ((currentHours*60) + currentMins)) + " min(s)";
 
 //                                        if(estHrs > 0){
 //                                            estimated += estHrs + " hr(s) ";
 //                                        }
 //
 //                                        estimated += estMins + " min(s)";
-                                    }
-                                    else{
+                                        }
+                                        else{
 
-                                    }
+                                        }
 
-                                    hour = Integer.parseInt(new DecimalFormat("00").format(h) + new DecimalFormat("00").format(m));
-
-
-                                    final SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
-
-                                    String time = h + ":" + m;
-
-                                    final Date date;
-                                    try {
-                                        date = f24hours.parse(time);
-
-                                        final SimpleDateFormat f12hours = new SimpleDateFormat("hh:mm aa");
-
-                                        final String time12hr = f12hours.format(date);
-
-                                        schedule = time12hr;
-                                        updateInfo();
-
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
+                                        hour = Integer.parseInt(new DecimalFormat("00").format(h) + new DecimalFormat("00").format(m));
 
 
-                                    refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
+                                        final SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
 
-                                            refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    //String status = dataSnapshot.child("status").getValue().toString();
+                                        String time = h + ":" + m;
 
-                                                    if(dataSnapshot.child("status").exists()){
-                                                        //inTransit = true;
-                                                        updateInfo();
-                                                        //ShowToast("not in transit");
-                                                        return;
-                                                    }
-                                                    else{
-                                                        //checks if already has a reservation with same time
-                                                        for(DataSnapshot reservation : reservationSnapshot.getChildren()){
-                                                            if(!reservation.exists()){
-                                                                reserved = false;
-                                                                reservedInOther = false;
-                                                                updateInfo();
-                                                                return;
-                                                            }
-                                                            else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                                                reserved = true;
-                                                                updateInfo();
-                                                                return;
-                                                            }
-                                                            else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                                                reservedInOther = true;
-                                                                updateInfo();
-                                                                return;
+                                        final Date date;
+                                        try {
+                                            date = f24hours.parse(time);
+
+                                            final SimpleDateFormat f12hours = new SimpleDateFormat("hh:mm aa");
+
+                                            final String time12hr = f12hours.format(date);
+
+                                            schedule = time12hr;
+                                            updateInfo();
+
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                        refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
+
+                                                refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        //String status = dataSnapshot.child("status").getValue().toString();
+
+                                                        if(dataSnapshot.child("status").exists()){
+                                                            //inTransit = true;
+                                                            updateInfo();
+                                                            //ShowToast("not in transit");
+                                                            return;
+                                                        }
+                                                        else{
+                                                            //checks if already has a reservation with same time
+                                                            for(DataSnapshot reservation : reservationSnapshot.getChildren()){
+                                                                if(!reservation.exists()){
+                                                                    reserved = false;
+                                                                    reservedInOther = false;
+                                                                    updateInfo();
+                                                                    return;
+                                                                }
+                                                                else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                                                    reserved = true;
+                                                                    updateInfo();
+                                                                    return;
+                                                                }
+                                                                else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                                                    reservedInOther = true;
+                                                                    updateInfo();
+                                                                    return;
+                                                                }
                                                             }
                                                         }
                                                     }
-                                                }
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                }
-                                            });
-
-
-                                            updateInfo();
-
-                            //                if(!reserved){
-                            //
-                            //                    btnReserve.setEnabled(false);
-                            //                    btnReserve.setText("You are reserved in another transit");
-                            //                    //reserve student
-                            //                }
-                            //                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
+                                                    }
+                                                });
 
 
-                        }
+                                                updateInfo();
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                //                if(!reserved){
+                                                //
+                                                //                    btnReserve.setEnabled(false);
+                                                //                    btnReserve.setText("You are reserved in another transit");
+                                                //                    //reserve student
+                                                //                }
+                                                //                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
+                                            }
 
-                        }
-                    });
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+
                     updateInfo();
                     updateMarkers();
                 }
@@ -416,14 +426,17 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 //                    updateInfo();
 //                }
 
-            if(reservations >= capacity){
-                Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
-            }
-            else if(!reserved){
-                refTransit.child("reservations").child(studentId).setValue(hour);
-                refStudent.child("reservations").child(transitId).setValue(hour);
-                reserved = true;
-                Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+
+            if(!reserved){
+                if(reservations >= capacity){
+                    Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    refTransit.child("reservations").child(studentId).setValue(hour);
+                    refStudent.child("reservations").child(transitId).setValue(hour);
+                    reserved = true;
+                    Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+                }
             }
             else{
                 refTransit.child("reservations").child(studentId).removeValue();
@@ -541,8 +554,15 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             btnReserve.setText("Reserve Seat");
             btnReserve.setEnabled(true);
             txtReserved.setText("");
+
+            if( reservations >= capacity){
+                btnReserve.setEnabled(false);
+                btnReserve.setText("Full");
+            }
         }
         else {
+
+            btnReserve.setEnabled(true);
             btnReserve.setText("Cancel Reservation");
             txtReserved.setText("Reserved");
 
@@ -553,8 +573,8 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             }
         }
 
-        //if shuttle isnt waiting or cap is full
-        if(!status.equals("Waiting") || reservations >= capacity){
+        //if shuttle isnt waiting
+        if(!status.equals("Waiting")){
             btnReserve.setEnabled(false);
             btnReserve.setText("In Transit");
         }
