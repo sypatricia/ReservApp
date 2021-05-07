@@ -432,7 +432,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                     Toast.makeText(ShuttleActivity.this,"This shuttle is full", Toast.LENGTH_LONG).show();
                 }
                 else{
-                    refTransit.child("reservations").child(studentId).setValue(hour);
+                    refTransit.child("reservations").child(studentId).setValue("Reserved");
                     refStudent.child("reservations").child(transitId).setValue(hour);
                     reserved = true;
                     Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
