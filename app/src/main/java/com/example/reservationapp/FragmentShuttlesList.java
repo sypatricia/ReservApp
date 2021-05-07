@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentShuttlesList#newInstance} factory method to
@@ -39,6 +41,9 @@ public class FragmentShuttlesList extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    View rootView;
+    int count = 0, counter = 0;
+
     ListView lstShuttles;
     Spinner spnDestination;
 
@@ -47,12 +52,15 @@ public class FragmentShuttlesList extends Fragment {
     DatabaseReference refLocations;
     DatabaseReference refDestinations;;
     DatabaseReference refSchedules;
+    ValueEventListener locationsListner;
 
     FirebaseListOptions<ModelLocation> options;
-    ModelLocation[] shuttles;
+    ArrayList<ModelLocation> shuttles;
 
     FirebaseListOptions<ModelDestination> optionsDestination;
     ModelDestination[] destinationArr;
+
+    String selectedId;
 
     String studentId;
     int destinationSelectIndex = 0;
@@ -86,15 +94,37 @@ public class FragmentShuttlesList extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+//        updateList();
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_shuttles_list, container, false);
+        rootView = inflater.inflate(R.layout.fragment_shuttles_list, container, false);
 
         //hook up view fields
         lstShuttles = rootView.findViewById(R.id.lstShuttles2);
@@ -108,6 +138,7 @@ public class FragmentShuttlesList extends Fragment {
         refDrivers = refRoot.child("Drivers");
         refDestinations = refRoot.child("Stations");
         refSchedules = refRoot.child("Schedules");
+
 
         refDestinations.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -150,7 +181,7 @@ public class FragmentShuttlesList extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 destinationSelectIndex = position;
-
+                selectedId = destinationArr[position].getId();
                 //refLocation.child("destination").setValue(destinationArr[destinationSelectIndex].getId());
                 updateList();
                 //ShowToast(destinationArr[destinationSelectIndex].getId());
@@ -168,12 +199,12 @@ public class FragmentShuttlesList extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(getActivity(), ShuttleActivity.class);
                 intent.putExtra("studentId", studentId);
-                intent.putExtra("id", shuttles[i].getId());
-                intent.putExtra("status", shuttles[i].getStatus());
-                intent.putExtra("destination", shuttles[i].getDestination());
-                intent.putExtra("locationLatitude", shuttles[i].getLatitude());
-                intent.putExtra("locationLatitude", shuttles[i].getLatitude());
-                intent.putExtra("locationLongitude", shuttles[i].getLongitude());
+                intent.putExtra("id", shuttles.get(i).getId());
+                intent.putExtra("status", shuttles.get(i).getStatus());
+                intent.putExtra("destination", shuttles.get(i).getDestination());
+                intent.putExtra("locationLatitude", shuttles.get(i).getLatitude());
+                intent.putExtra("locationLatitude", shuttles.get(i).getLatitude());
+                intent.putExtra("locationLongitude", shuttles.get(i).getLongitude());
                 TextView txtDriver = view.findViewById(R.id.txtDriverName);
                 String driverName = txtDriver.getText().toString();
                 intent.putExtra("driverName", driverName);
@@ -188,71 +219,136 @@ public class FragmentShuttlesList extends Fragment {
 
     public void updateList(){
         //listens for changes in tracking table
-        refLocations.addValueEventListener(new ValueEventListener() {
+        locationsListner = refLocations.orderByChild("from").equalTo(selectedId).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot locationsSnapshot) {
+                if(locationsSnapshot.exists()){
+                    count = (int)locationsSnapshot.getChildrenCount();
+                    counter = 0;
+                    shuttles = new ArrayList<>();
 
-                String count  = String.valueOf(dataSnapshot.getChildrenCount());
-                shuttles = new ModelLocation[ Integer.valueOf(count)];
+                    final ArrayList<ModelShuttleListItem> listitems = new ArrayList<>();
+
+                    for(DataSnapshot shuttle : locationsSnapshot.getChildren()){
+                        final ModelLocation shuttleModel = new ModelLocation();
+                        shuttleModel.setId(shuttle.getKey());
+                        shuttleModel.setStatus(shuttle.child("status").getValue().toString());
+                        shuttleModel.setLatitude((double)shuttle.child("latitude").getValue());
+                        shuttleModel.setLongitude((double)shuttle.child("longitude").getValue());
+                        shuttleModel.setDestination(shuttle.child("destination").getValue().toString());
+                        shuttles.add(shuttleModel);
+
+                        final String status = shuttle.child("status").getValue().toString();
+
+                        DatabaseReference driver = refDrivers.child(shuttle.getKey());
+                        driver.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    String fName = dataSnapshot.child("firstName").getValue().toString();
+                                    String lName = dataSnapshot.child("lastName").getValue().toString();
+                                    final String driverName = fName + " " + lName;
+
+                                    DatabaseReference refDestination = refDestinations.child(shuttleModel.getDestination());
+                                    refDestination.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                String destination = dataSnapshot.child("name").getValue().toString();
+
+                                                listitems.add(new ModelShuttleListItem(driverName, status, destination));
+
+                                                counter++;
+                                                if(count == counter){
+                                                    AdapterShuttlesList adapterTransitList = new AdapterShuttlesList(rootView.getContext(), R.layout.list_item_shuttle, listitems);
+                                                    lstShuttles.setAdapter(adapterTransitList);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                }
+                else{
+                    lstShuttles.setAdapter(null);
+                }
+
+
+
+                //String count  = String.valueOf(dataSnapshot.getChildrenCount());
+//                shuttles = new ModelLocation[ Integer.valueOf(count)];
 
                 //build options for the firebase list adapter
-                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations.orderByChild("from").equalTo(destinationArr[destinationSelectIndex].getId()), ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
-
-                FirebaseListAdapter<ModelLocation> firebaseListAdapter = new FirebaseListAdapter<ModelLocation>(options) {
-                    @Override
-                    protected void populateView(@NonNull View v, @NonNull ModelLocation model, int position) {
-
-                        DatabaseReference itemRef = getRef(position);
-                        //gets info from driver and destination table using the linked IDs
-                        DatabaseReference driver = refDrivers.child(itemRef.getKey());
-                        DatabaseReference destination = refDestinations.child(model.getDestination());
-                        //gets the view text fields
-                        final TextView txtDriverName = v.findViewById(R.id.txtDriverName);
-                        final TextView txtDestination = v.findViewById(R.id.txtDestination);
-                        TextView txtStatus = v.findViewById(R.id.txtStatus);
-
-                        //sets the driver name   in the list item using retrieved driver info
-                        driver.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                String fName = dataSnapshot.child("firstName").getValue().toString();
-                                String lName = dataSnapshot.child("lastName").getValue().toString();
-                                txtDriverName.setText(fName + " " + lName);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                        //sets the destination name in the list item using retrieved destination info
-                        destination.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                txtDestination.setText("To: " + dataSnapshot.child("name").getValue());
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        txtStatus.setText(String.valueOf(model.getStatus()));
-
-                        //store ids in array to pass in shuttle activity
-                        shuttles[position] = new ModelLocation();
-                        shuttles[position].setId(itemRef.getKey());
-                        shuttles[position].setStatus(model.getStatus());
-                        shuttles[position].setLatitude(model.getLatitude());
-                        shuttles[position].setLongitude(model.getLongitude());
-                        shuttles[position].setDestination(model.getDestination());
-
-                    }
-                };
-
-                firebaseListAdapter.startListening();
-                lstShuttles.setAdapter(firebaseListAdapter);
+//                options = new FirebaseListOptions.Builder<ModelLocation>().setQuery(refLocations.orderByChild("from").equalTo(destinationArr[destinationSelectIndex].getId()), ModelLocation.class).setLayout(R.layout.list_item_shuttle).build();
+//
+//                FirebaseListAdapter<ModelLocation> firebaseListAdapter = new FirebaseListAdapter<ModelLocation>(options) {
+//                    @Override
+//                    protected void populateView(@NonNull View v, @NonNull ModelLocation model, int position) {
+//
+//                        DatabaseReference itemRef = getRef(position);
+//                        //gets info from driver and destination table using the linked IDs
+//                        DatabaseReference driver = refDrivers.child(itemRef.getKey());
+//                        DatabaseReference destination = refDestinations.child(model.getDestination());
+//                        //gets the view text fields
+//                        final TextView txtDriverName = v.findViewById(R.id.txtDriverName);
+//                        final TextView txtDestination = v.findViewById(R.id.txtDestination);
+//                        TextView txtStatus = v.findViewById(R.id.txtStatus);
+//
+//                        //sets the driver name   in the list item using retrieved driver info
+//                        driver.addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                String fName = dataSnapshot.child("firstName").getValue().toString();
+//                                String lName = dataSnapshot.child("lastName").getValue().toString();
+//                                txtDriverName.setText(fName + " " + lName);
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
+//                        //sets the destination name in the list item using retrieved destination info
+//                        destination.addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                txtDestination.setText("To: " + dataSnapshot.child("name").getValue());
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
+//
+//                        txtStatus.setText(String.valueOf(model.getStatus()));
+//
+//                        //store ids in array to pass in shuttle activity
+//                        shuttles[position] = new ModelLocation();
+//                        shuttles[position].setId(itemRef.getKey());
+//                        shuttles[position].setStatus(model.getStatus());
+//                        shuttles[position].setLatitude(model.getLatitude());
+//                        shuttles[position].setLongitude(model.getLongitude());
+//                        shuttles[position].setDestination(model.getDestination());
+//
+//                    }
+//                };
+//
+//                firebaseListAdapter.startListening();
+//                lstShuttles.setAdapter(firebaseListAdapter);
 
             }
 
