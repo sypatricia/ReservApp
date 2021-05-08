@@ -86,6 +86,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refReservations;
     ValueEventListener locationListener;
     ValueEventListener reservationsListener;
+    ValueEventListener studReservationListener;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -93,10 +94,17 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     LocationCallback locationCallBack;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        startListening();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         refLocation.orderByValue().removeEventListener(locationListener);
         refReservations.orderByValue().removeEventListener(reservationsListener);
+        refStudent.child("reservations").removeEventListener(studReservationListener);
     }
 
     @Override
@@ -104,6 +112,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         super.onStop();
         refLocation.orderByValue().removeEventListener(locationListener);
         refReservations.orderByValue().removeEventListener(reservationsListener);
+        refStudent.child("reservations").removeEventListener(studReservationListener);
     }
 
     @Override
@@ -111,6 +120,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         super.onDestroy();
         refLocation.orderByValue().removeEventListener(locationListener);
         refReservations.orderByValue().removeEventListener(reservationsListener);
+        refStudent.child("reservations").removeEventListener(studReservationListener);
     }
 
     @Override
@@ -351,7 +361,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                         reservationsListener = refReservations.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
+                                reservations = (int)dataSnapshot.getChildrenCount();
                                 updateInfo();
                             }
 
@@ -420,7 +430,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                         }
 
 
-                                        refStudent.child("reservations").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        studReservationListener = refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
 
@@ -451,6 +461,12 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                                                 }
                                                                 else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
                                                                     reservedInOther = true;
+                                                                    updateInfo();
+                                                                    return;
+                                                                }
+                                                                else{
+                                                                    reserved = false;
+                                                                    reservedInOther = false;
                                                                     updateInfo();
                                                                     return;
                                                                 }
