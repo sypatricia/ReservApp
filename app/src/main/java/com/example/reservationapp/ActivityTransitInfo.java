@@ -33,23 +33,33 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
     ValueEventListener transitListener;
+    ValueEventListener studReservationListeener;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getInfo();
+    }
 
     @Override
     public void onPause() {
         super.onPause();
         refTransit.removeEventListener(transitListener);
+        refStudent.child("reservations").removeEventListener(studReservationListeener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         refTransit.removeEventListener(transitListener);
+        refStudent.child("reservations").removeEventListener(studReservationListeener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         refTransit.removeEventListener(transitListener);
+        refStudent.child("reservations").removeEventListener(studReservationListeener);
     }
 
     @Override
@@ -79,11 +89,69 @@ public class ActivityTransitInfo extends AppCompatActivity {
         refSchedule = refRoot.child("Schedules/" + schedId);
         refStations = refRoot.child("Stations");
 
+        getInfo();
+
+        refStations.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String from = dataSnapshot.child(fromId).child("name").getValue().toString();
+                String to = dataSnapshot.child(toId).child("name").getValue().toString();
+
+                txtFrom.setText(from);
+                txtTo.setText(to);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        btnReserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //todo: add checking of waiting/intransit status if transit is current transit
+
+
+                if(!reservedHere){
+                    if(resCount >= capCount){
+                        Toast.makeText(ActivityTransitInfo.this,"This shuttle is full", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        refTransit.child("reservations").child(studentId).setValue("Reserved");
+                        refStudent.child("reservations").child(transitId).setValue(hour);
+                        reservedHere = true;
+                        Toast.makeText(ActivityTransitInfo.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
+                    }
+                }
+                else{
+                    refTransit.child("reservations").child(studentId).removeValue();
+                    refStudent.child("reservations").child(transitId).removeValue();
+                    reservedHere = false;
+                    Toast.makeText(ActivityTransitInfo.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
+                }
+                updateReserveButton();
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+    }
+
+    void getInfo(){
         transitListener = refTransit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 resCount = (int)dataSnapshot.child("reservations").getChildrenCount();
                 UpdateResCap();
+                updateReserveButton();
             }
 
             @Override
@@ -134,7 +202,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
                 }
 
 
-                refStudent.child("reservations").addListenerForSingleValueEvent(new ValueEventListener() {
+                studReservationListeener = refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
 
@@ -149,6 +217,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                     return;
                                 }
                                 else{
+                                    inTransit = false;
                                     //checks if already has a reservation with same time
                                     for(DataSnapshot reservation : reservationSnapshot.getChildren()){
                                         if(!reservation.exists()){
@@ -164,6 +233,12 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                         }
                                         else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
                                             reservedDiff = true;
+                                            updateReserveButton();
+                                            return;
+                                        }
+                                        else{
+                                            reservedHere = false;
+                                            reservedDiff = false;
                                             updateReserveButton();
                                             return;
                                         }
@@ -201,79 +276,6 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
             }
         });
-
-        refStations.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String from = dataSnapshot.child(fromId).child("name").getValue().toString();
-                String to = dataSnapshot.child(toId).child("name").getValue().toString();
-
-                txtFrom.setText(from);
-                txtTo.setText(to);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-        btnReserve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //todo: add checking of waiting/intransit status if transit is current transit
-
-
-                if(!reservedHere){
-                    if(resCount >= capCount){
-                        Toast.makeText(ActivityTransitInfo.this,"This shuttle is full", Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        refTransit.child("reservations").child(studentId).setValue("Reserved");
-                        refStudent.child("reservations").child(transitId).setValue(hour);
-                        reservedHere = true;
-                        Toast.makeText(ActivityTransitInfo.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
-                    }
-                }
-                else{
-                    refTransit.child("reservations").child(studentId).removeValue();
-                    refStudent.child("reservations").child(transitId).removeValue();
-                    reservedHere = false;
-                    Toast.makeText(ActivityTransitInfo.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
-                }
-                updateReserveButton();
-
-//                if(status.equals("Waiting")){
-//                    if(!reserved){//if student is not reserve
-//                        refReservations.child(studentId).child("name").setValue(studentName);
-//                        refStudent.child("reserved").setValue(id);
-//                        startLocationUpdates();
-//
-//                        //Toast.makeText(ShuttleActivity.this,"You are now reserved for this shuttle", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                    else{//if student clicks cancel
-//                        stopLocationUpdates();
-//                        refReservations.child(studentId).removeValue();
-//                        refStudent.child("reserved").removeValue();
-//
-//                        //Toast.makeText(ShuttleActivity.this,"You have cancelled the reservation", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                    updateInfo();
-//                }
-            }
-        });
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
     void UpdateResCap(){
