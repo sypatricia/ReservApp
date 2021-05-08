@@ -46,6 +46,7 @@ public class FragmentShuttlesList extends Fragment {
 
     ListView lstShuttles;
     Spinner spnDestination;
+    boolean initialized = false;
 
     DatabaseReference refRoot;
     DatabaseReference refDrivers;
@@ -99,7 +100,8 @@ public class FragmentShuttlesList extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        updateList();
+        if(initialized)
+            updateList();
     }
 
     @Override
@@ -218,6 +220,7 @@ public class FragmentShuttlesList extends Fragment {
     }
 
     public void updateList(){
+        initialized = true;
         //listens for changes in tracking table
         locationsListner = refLocations.orderByChild("from").equalTo(selectedId).addValueEventListener(new ValueEventListener() {
             @Override
