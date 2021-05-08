@@ -83,7 +83,9 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refStudent;
     DatabaseReference refTransit;
     DatabaseReference refSchedule;
+    DatabaseReference refReservations;
     ValueEventListener locationListener;
+    ValueEventListener reservationsListener;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -94,18 +96,21 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     public void onPause() {
         super.onPause();
         refLocation.orderByValue().removeEventListener(locationListener);
+        refReservations.orderByValue().removeEventListener(reservationsListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         refLocation.orderByValue().removeEventListener(locationListener);
+        refReservations.orderByValue().removeEventListener(reservationsListener);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         refLocation.orderByValue().removeEventListener(locationListener);
+        refReservations.orderByValue().removeEventListener(reservationsListener);
     }
 
     @Override
@@ -293,7 +298,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         locationListener = refLocation.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild("latitude")){
+                if(!dataSnapshot.exists()){
                     finish();
                 }
                 else{
@@ -342,11 +347,23 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                             }
                         });
 
-                        refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                        refReservations = refTransit.child("reservations");
+                        reservationsListener = refReservations.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 reservations = (int)dataSnapshot.child("reservations").getChildrenCount();
                                 updateInfo();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                                 String schedId = dataSnapshot.child("sched").getValue().toString();
 
