@@ -53,7 +53,7 @@ public class FragmentShuttlesList extends Fragment {
     DatabaseReference refLocations;
     DatabaseReference refDestinations;;
     DatabaseReference refSchedules;
-    ValueEventListener locationsListner;
+    ValueEventListener locationsListner = null;
 
     FirebaseListOptions<ModelLocation> options;
     ArrayList<ModelLocation> shuttles;
@@ -107,19 +107,19 @@ public class FragmentShuttlesList extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+        removeLocationsListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+        removeLocationsListener();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+        removeLocationsListener();
     }
 
     @Override
@@ -219,9 +219,17 @@ public class FragmentShuttlesList extends Fragment {
         return rootView;
     }
 
+    void removeLocationsListener(){
+        if(locationsListner != null){
+            refLocations.orderByChild("from").equalTo(selectedId).removeEventListener(locationsListner);
+            locationsListner = null;
+        }
+    }
+
     public void updateList(){
         initialized = true;
         //listens for changes in tracking table
+        removeLocationsListener();
         locationsListner = refLocations.orderByChild("from").equalTo(selectedId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot locationsSnapshot) {

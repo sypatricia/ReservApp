@@ -32,8 +32,8 @@ public class ActivityTransitInfo extends AppCompatActivity {
     boolean reservedHere = false, reservedDiff = false, inTransit = false;
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
-    ValueEventListener transitListener;
-    ValueEventListener studReservationListeener;
+    ValueEventListener transitListener = null;
+    ValueEventListener studReservationListeener = null;
 
     @Override
     public void onResume() {
@@ -44,22 +44,22 @@ public class ActivityTransitInfo extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        refTransit.removeEventListener(transitListener);
-        refStudent.child("reservations").removeEventListener(studReservationListeener);
+        removeTransitListener();
+        removeReservationListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refTransit.removeEventListener(transitListener);
-        refStudent.child("reservations").removeEventListener(studReservationListeener);
+        removeTransitListener();
+        removeReservationListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        refTransit.removeEventListener(transitListener);
-        refStudent.child("reservations").removeEventListener(studReservationListeener);
+        removeTransitListener();
+        removeReservationListener();
     }
 
     @Override
@@ -145,7 +145,22 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     }
 
+    void removeTransitListener(){
+        if(transitListener != null){
+            refTransit.removeEventListener(transitListener);
+            transitListener = null;
+        }
+    }
+
+    void removeReservationListener(){
+        if(studReservationListeener != null) {
+            refStudent.child("reservations").removeEventListener(studReservationListeener);
+            studReservationListeener = null;
+        }
+    }
+
     void getInfo(){
+        removeTransitListener();
         transitListener = refTransit.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -201,7 +216,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-
+                removeReservationListener();
                 studReservationListeener = refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
@@ -218,30 +233,31 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                 }
                                 else{
                                     inTransit = false;
-                                    //checks if already has a reservation with same time
-                                    for(DataSnapshot reservation : reservationSnapshot.getChildren()){
-                                        if(!reservation.exists()){
-                                            reservedHere = false;
-                                            reservedDiff = false;
-                                            updateReserveButton();
-                                            return;
-                                        }
-                                        else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                            reservedHere = true;
-                                            updateReserveButton();
-                                            return;
-                                        }
-                                        else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                            reservedDiff = true;
-                                            updateReserveButton();
-                                            return;
-                                        }
-                                        else{
-                                            reservedHere = false;
-                                            reservedDiff = false;
-                                            updateReserveButton();
-                                            return;
-                                        }
+                                    updateReserveButton();
+                                }
+                                //checks if already has a reservation with same time
+                                for(DataSnapshot reservation : reservationSnapshot.getChildren()){
+                                    if(!reservation.exists()){
+                                        reservedHere = false;
+                                        reservedDiff = false;
+                                        updateReserveButton();
+                                        return;
+                                    }
+                                    else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                        reservedHere = true;
+                                        updateReserveButton();
+                                        return;
+                                    }
+                                    else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
+                                        reservedDiff = true;
+                                        updateReserveButton();
+                                        return;
+                                    }
+                                    else{
+                                        reservedHere = false;
+                                        reservedDiff = false;
+                                        updateReserveButton();
+                                        return;
                                     }
                                 }
                             }

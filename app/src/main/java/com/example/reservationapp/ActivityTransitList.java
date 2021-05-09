@@ -37,7 +37,7 @@ public class ActivityTransitList extends AppCompatActivity {
     int count = 0, counter = 0;
 
     DatabaseReference refRoot, refTransits, refSchedule, refDesinations, refDriver;
-    ValueEventListener transitListener;
+    ValueEventListener transitListener = null;
 
     FirebaseListOptions<ScheduleModel> options;
 
@@ -52,19 +52,19 @@ public class ActivityTransitList extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        refSchedule.child("transits").removeEventListener(transitListener);
+        removeTransitListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refSchedule.child("transits").removeEventListener(transitListener);
+        removeTransitListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        refSchedule.child("transits").removeEventListener(transitListener);
+        removeTransitListener();
     }
 
     @Override
@@ -86,87 +86,6 @@ public class ActivityTransitList extends AppCompatActivity {
         refDesinations = refRoot.child("Stations");
 
         populateList();
-
-//        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedule.child("transits"), ScheduleModel.class).setLayout(R.layout.list_item_transit).build();
-//
-//        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
-//            @Override
-//            protected void populateView(@NonNull View v, @NonNull final ScheduleModel sched, int position) {
-//
-//                DatabaseReference itemRef = getRef(position);
-//
-//                final ModelTransit modelTransit = new ModelTransit();
-//                modelTransit.setId(itemRef.getKey());
-//
-//                final TextView txtName = v.findViewById(R.id.txtName);
-//                final TextView txtFrom = v.findViewById(R.id.txtFrom);
-//                final TextView txtTo = v.findViewById(R.id.txtTo);
-//
-//                refTransits.child(itemRef.getKey()).addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                        if(dataSnapshot.exists()){
-//
-//                            modelTransit.setDriver(dataSnapshot.child("driver").getValue().toString());
-//                            modelTransit.setFrom(dataSnapshot.child("from").getValue().toString());
-//                            modelTransit.setTo(dataSnapshot.child("to").getValue().toString());
-//                            modelTransit.setSched(dataSnapshot.child("sched").getValue().toString());
-//
-//                            refDriver.child(modelTransit.getDriver()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                                    String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-//
-//                                    txtName.setText(name);
-//
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(DatabaseError error) {
-//                                    //ShowToast("Failed to read database");
-//                                }
-//                            });
-//
-//                            refDesinations.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                                    if(dataSnapshot.exists()){
-//
-//                                        String from =  dataSnapshot.child(modelTransit.getFrom()).child("name").getValue().toString();
-//                                        String to =  dataSnapshot.child(modelTransit.getTo()).child("name").getValue().toString();
-//
-//                                        txtFrom.setText(from);
-//                                        txtTo.setText(to);
-//
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(DatabaseError error) {
-//                                    //ShowToast("Failed to read database");
-//                                }
-//                            });
-//
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//                arrTansits.add(modelTransit);
-//
-//            }
-//        };
-//
-//        firebaseListAdapter.startListening();
-//        lstTransits.setAdapter(firebaseListAdapter);
 
         refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -215,7 +134,15 @@ public class ActivityTransitList extends AppCompatActivity {
 
     }
 
+    void removeTransitListener(){
+        if(transitListener != null){
+            refSchedule.child("transits").removeEventListener(transitListener);
+            transitListener = null;
+        }
+    }
+
     void populateList(){
+        removeTransitListener();
         transitListener = refSchedule.child("transits").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot transitSnapshot) {

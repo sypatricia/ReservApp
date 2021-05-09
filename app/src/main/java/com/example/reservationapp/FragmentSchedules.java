@@ -51,7 +51,7 @@ public class FragmentSchedules extends Fragment {
     ArrayList<ScheduleModel> schedules = new ArrayList<>();
 
     DatabaseReference refSchedules;
-    ValueEventListener schedulesListener;
+    ValueEventListener schedulesListener = null;
 
     FirebaseListOptions<ScheduleModel> options;
 
@@ -96,19 +96,19 @@ public class FragmentSchedules extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+        removeSchedulesListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+        removeSchedulesListener();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+        removeSchedulesListener();
     }
 
     @Override
@@ -122,43 +122,6 @@ public class FragmentSchedules extends Fragment {
         refSchedules = FirebaseDatabase.getInstance().getReference("Schedules");
         populateList();
 
-//        options = new FirebaseListOptions.Builder<ScheduleModel>().setQuery(refSchedules.orderByChild("time"), ScheduleModel.class).setLayout(R.layout.list_item_schedule).build();
-//
-//        FirebaseListAdapter<ScheduleModel> firebaseListAdapter = new FirebaseListAdapter<ScheduleModel>(options) {
-//            @Override
-//            protected void populateView(@NonNull View v, @NonNull ScheduleModel model, int position) {
-//
-//                DatabaseReference itemRef = getRef(position);
-//
-//                TextView txtTime = v.findViewById(R.id.txtTime);
-//
-//                String time = model.getHour() + ":" +model.getMinute();
-//
-//                SimpleDateFormat f24hours = new SimpleDateFormat(
-//                        "HH:mm"
-//                );
-//
-//                final Date date;
-//                try {
-//                    date = f24hours.parse(time);
-//
-//                    final SimpleDateFormat f12hours = new SimpleDateFormat(
-//                            "hh:mm aa"
-//                    );
-//
-//                    final String time12hr = f12hours.format(date);
-//
-//                    txtTime.setText(time12hr);
-//
-//                    schedules.add(new ScheduleModel(itemRef.getKey(), model.getHour(), model.getMinute()));
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        };
-//
-//        firebaseListAdapter.startListening();
-//        lstSchedules.setAdapter(firebaseListAdapter);
         lstSchedules.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -171,8 +134,15 @@ public class FragmentSchedules extends Fragment {
         return rootView;
     }
 
-    void populateList(){
+    void removeSchedulesListener(){
+        if(schedulesListener != null){
+            refSchedules.orderByChild("time").removeEventListener(schedulesListener);
+            schedulesListener = null;
+        }
+    }
 
+    void populateList(){
+        removeSchedulesListener();
         schedulesListener = refSchedules.orderByChild("time").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot scheduleSnapshot) {

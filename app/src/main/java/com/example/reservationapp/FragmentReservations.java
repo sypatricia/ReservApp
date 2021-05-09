@@ -55,7 +55,7 @@ public class FragmentReservations extends Fragment {
     ArrayList<ModelReservation> reservations = new ArrayList<>();
 
     DatabaseReference refRoot, refStudent;
-    ValueEventListener reservationsListener;
+    ValueEventListener reservationsListener = null;
 
     FirebaseListOptions<Integer> options;
     FloatingActionButton fab;
@@ -100,19 +100,19 @@ public class FragmentReservations extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        refStudent.child("reservations").orderByValue().removeEventListener(reservationsListener);
+        removeReservationsListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refStudent.child("reservations").orderByValue().removeEventListener(reservationsListener);
+        removeReservationsListener();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        refStudent.child("reservations").orderByValue().removeEventListener(reservationsListener);
+        removeReservationsListener();
     }
 
     @Override
@@ -132,119 +132,6 @@ public class FragmentReservations extends Fragment {
         refStudent = refRoot.child("Students/" + studentId);
 
         populateList();
-
-//        options = new FirebaseListOptions.Builder<Integer>().setQuery(refStudent.child("reservations").orderByValue(), Integer.class).setLayout(R.layout.list_item_reservation).build();
-//
-//        FirebaseListAdapter<Integer> firebaseListAdapter = new FirebaseListAdapter<Integer>(options) {
-//            @Override
-//            protected void populateView(@NonNull View v, @NonNull final Integer hour, int position) {
-//
-//                DatabaseReference itemRef = getRef(position);
-//                final String transitId = itemRef.getKey();
-//
-//                final TextView txtDriver = v.findViewById(R.id.txtDriver);
-//                final TextView txtTime = v.findViewById(R.id.txtTime);
-//                final TextView txtFrom = v.findViewById(R.id.txtFrom);
-//                final TextView txtDestination = v.findViewById(R.id.txtDestination);
-//
-//                DatabaseReference refTransit = FirebaseDatabase.getInstance().getReference("Transits/" + transitId);
-//
-//                refTransit.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                        String driverId = "", schedId = "", fromId = "", destinationId = "";
-//
-//                        driverId = dataSnapshot.child("driver").getValue().toString();
-//                        schedId = dataSnapshot.child("sched").getValue().toString();
-//                        fromId = dataSnapshot.child("from").getValue().toString();
-//                        destinationId = dataSnapshot.child("to").getValue().toString();
-//
-//                        DatabaseReference refDriver = refRoot.child("Drivers/" + driverId);
-//                        DatabaseReference refSchedule = refRoot.child("Schedules/" + schedId);
-//                        DatabaseReference refFrom = refRoot.child("Stations/" + fromId);
-//                        DatabaseReference refDestination = refRoot.child("Stations/" + destinationId);
-//
-//                        refDriver.addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                String drivername = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
-//                                txtDriver.setText(drivername);
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
-//
-//                        refSchedule.addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                                String time = dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
-//                                SimpleDateFormat f24hours = new SimpleDateFormat("HH:mm");
-//
-//                                final Date date;
-//                                try {
-//                                    date = f24hours.parse(time);
-//
-//                                    final SimpleDateFormat f12hours = new SimpleDateFormat("hh:mm aa");
-//
-//                                    final String time12hr = f12hours.format(date);
-//
-//                                    txtTime.setText(time12hr);
-//
-//                                } catch (ParseException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
-//
-//                        refFrom.addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                String from = dataSnapshot.child("name").getValue().toString();
-//                                txtFrom.setText(from);
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
-//
-//                        refDestination.addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                String destination = dataSnapshot.child("name").getValue().toString();
-//                                txtDestination.setText(destination);
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
-//
-//                        reservations.add(new ModelReservation(transitId, driverId, schedId, fromId,destinationId));
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//            }
-//        };
-//
-//        firebaseListAdapter.startListening();
-//        lstReservations.setAdapter(firebaseListAdapter);
 
         lstReservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -272,7 +159,15 @@ public class FragmentReservations extends Fragment {
         return rootView;
     }
 
+    void removeReservationsListener(){
+        if(reservationsListener != null){
+            refStudent.child("reservations").orderByValue().removeEventListener(reservationsListener);
+            reservationsListener = null;
+        }
+    }
+
     void populateList(){
+        removeReservationsListener();
         reservationsListener = refStudent.child("reservations").orderByValue().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot reservationsSnapshot) {

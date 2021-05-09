@@ -84,9 +84,9 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refTransit;
     DatabaseReference refSchedule;
     DatabaseReference refReservations;
-    ValueEventListener locationListener;
-    ValueEventListener reservationsListener;
-    ValueEventListener studReservationListener;
+    ValueEventListener locationListener = null;
+    ValueEventListener reservationsListener = null;
+    ValueEventListener studReservationListener = null;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -102,25 +102,25 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onPause() {
         super.onPause();
-        refLocation.orderByValue().removeEventListener(locationListener);
-        refReservations.orderByValue().removeEventListener(reservationsListener);
-        refStudent.child("reservations").removeEventListener(studReservationListener);
+        removeLocationListener();
+        removeReservationListener();
+        removeStudentReservationListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        refLocation.orderByValue().removeEventListener(locationListener);
-        refReservations.orderByValue().removeEventListener(reservationsListener);
-        refStudent.child("reservations").removeEventListener(studReservationListener);
+        removeLocationListener();
+        removeReservationListener();
+        removeStudentReservationListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        refLocation.orderByValue().removeEventListener(locationListener);
-        refReservations.orderByValue().removeEventListener(reservationsListener);
-        refStudent.child("reservations").removeEventListener(studReservationListener);
+        removeLocationListener();
+        removeReservationListener();
+        removeStudentReservationListener();
     }
 
     @Override
@@ -304,7 +304,28 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
     }
 
+
+    void removeLocationListener(){
+        if(locationListener != null){
+            refLocation.orderByValue().removeEventListener(locationListener);
+            locationListener = null;
+        }
+    }
+    void removeReservationListener(){
+        if(reservationsListener != null){
+            refReservations.orderByValue().removeEventListener(reservationsListener);
+            reservationsListener = null;
+        }
+    }
+    void removeStudentReservationListener(){
+        if(studReservationListener != null){
+            refStudent.child("reservations").removeEventListener(studReservationListener);
+            studReservationListener = null;
+        }
+    }
+
     public void startListening(){
+        removeLocationListener();
         locationListener = refLocation.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -359,6 +380,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                             });
 
                             refReservations = refTransit.child("reservations");
+                            removeReservationListener();
                             reservationsListener = refReservations.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -430,7 +452,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                                 e.printStackTrace();
                                             }
 
-
+                                            removeStudentReservationListener();
                                             studReservationListener = refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
@@ -498,6 +520,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
                                                 }
                                             });
+
                                         }
 
                                         @Override
