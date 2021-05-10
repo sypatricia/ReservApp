@@ -72,7 +72,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     boolean reservedInOther = false;
     String id, driverName, status, destinationId, destinationName = "", transitId, fromId, fromName, schedule, scheduleId, estimated = "";
     double locationLatitude, locationLongitude, destinationLatitude, destinationLongitude;
-    int reservations = 0, capacity = 0, hour = 0;
+    int reservations = 0, capacity = 0, hour = 0, currentHour;
 
     LatLng shuttleLocation, destinationLocation;
 
@@ -192,7 +192,10 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         btnReserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(currentHour > hour){
+                    Toast.makeText(ShuttleActivity.this,"Cannot reserve to transit past its departure time", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 if(!reserved){
                     if(reservations >= capacity){
@@ -385,6 +388,13 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     reservations = (int)dataSnapshot.getChildrenCount();
+                                    if(dataSnapshot.child(studentId).exists()){
+                                        String status = dataSnapshot.child(studentId).getValue().toString();
+                                        txtReserved.setText(status);
+                                    }
+                                    else{
+                                        txtReserved.setText("");
+                                    }
                                     updateInfo();
                                 }
 
@@ -408,28 +418,20 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                             int h = Integer.valueOf(dataSnapshot.child("hour").getValue().toString()) ;
                                             int m = Integer.valueOf(dataSnapshot.child("minute").getValue().toString());
 
+                                            Date currentTime = Calendar.getInstance().getTime();
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.setTime(currentTime);
+                                            int currentHours = cal.get(Calendar.HOUR_OF_DAY);
+                                            int currentMins = cal.get(Calendar.MINUTE);
+
                                             if(status.equals("Waiting")){
-                                                Date currentTime = Calendar.getInstance().getTime();
-                                                Calendar cal = Calendar.getInstance();
-                                                cal.setTime(currentTime);
-                                                int currentHours = cal.get(Calendar.HOUR_OF_DAY);
-                                                int currentMins = cal.get(Calendar.MINUTE);
-
-//                                        int estHrs = h - currentHours;
-//                                        int estMins = m - currentMins;
-
                                                 estimated = "ETD " + (((h*60) + m) - ((currentHours*60) + currentMins)) + " min(s)";
-
-//                                        if(estHrs > 0){
-//                                            estimated += estHrs + " hr(s) ";
-//                                        }
-//
-//                                        estimated += estMins + " min(s)";
                                             }
                                             else{
 
                                             }
 
+                                            currentHour = Integer.parseInt(new DecimalFormat("00").format(currentHours) + new DecimalFormat("00").format(currentMins));
                                             hour = Integer.parseInt(new DecimalFormat("00").format(h) + new DecimalFormat("00").format(m));
 
 
@@ -585,7 +587,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
             btnReserve.setEnabled(true);
             btnReserve.setText("Cancel Reservation");
-            txtReserved.setText("Reserved");
+            //txtReserved.setText("Reserved");
 
             if(reservedInOther){//if student is reserved in a different shuttle
                 btnReserve.setText("Reserve Seat");
