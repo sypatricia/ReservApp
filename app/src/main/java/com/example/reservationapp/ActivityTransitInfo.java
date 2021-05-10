@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ActivityTransitInfo extends AppCompatActivity {
@@ -28,7 +29,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
     ImageView btnBack;
 
     String studentId, transitId, driverId, schedId, fromId, toId;
-    int capCount, resCount, hour;
+    int capCount, resCount, hour, currentHour;
     boolean reservedHere = false, reservedDiff = false, inTransit = false;
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
@@ -194,9 +195,13 @@ public class ActivityTransitInfo extends AppCompatActivity {
         refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                int h = (int)dataSnapshot.child("hour").getValue();
-//                int m = (int)dataSnapshot.child("minute").getValue();
+                Date currentTime = Calendar.getInstance().getTime();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(currentTime);
+                int currentHours = cal.get(Calendar.HOUR_OF_DAY);
+                int currentMins = cal.get(Calendar.MINUTE);
 
+                currentHour = Integer.parseInt(new DecimalFormat("00").format(currentHours) + new DecimalFormat("00").format(currentMins));
                 hour = Integer.parseInt(new DecimalFormat("00").format(dataSnapshot.child("hour").getValue()) + new DecimalFormat("00").format(dataSnapshot.child("minute").getValue()));
 
                 String time = dataSnapshot.child("hour").getValue() + ":" + dataSnapshot.child("minute").getValue();
@@ -303,6 +308,10 @@ public class ActivityTransitInfo extends AppCompatActivity {
     void updateReserveButton(){
         if(inTransit){
             btnReserve.setText("Shuttle in Transit");
+            btnReserve.setEnabled(false);
+        }
+        else if(currentHour > hour){
+            btnReserve.setText("Transit is done");
             btnReserve.setEnabled(false);
         }
         else if(reservedDiff){
