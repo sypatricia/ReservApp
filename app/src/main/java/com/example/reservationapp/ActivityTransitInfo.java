@@ -30,7 +30,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     String studentId, transitId, driverId, schedId, fromId, toId;
     int capCount, resCount, hour, currentHour;
-    boolean reservedHere = false, reservedDiff = false, inTransit = false;
+    boolean reservedHere = false, reservedDiff = false, inTransit = false, isFinished = false;
 
     DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
     ValueEventListener transitListener = null;
@@ -240,6 +240,15 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                     inTransit = false;
                                     updateReserveButton();
                                 }
+                                if(dataSnapshot.child("isFinished").exists()){
+                                    isFinished = true;
+                                    updateReserveButton();
+                                    return;
+                                }
+                                else{
+                                    isFinished = false;
+                                    updateReserveButton();
+                                }
                                 //checks if already has a reservation with same time
                                 for(DataSnapshot reservation : reservationSnapshot.getChildren()){
                                     if(!reservation.exists()){
@@ -308,6 +317,10 @@ public class ActivityTransitInfo extends AppCompatActivity {
     void updateReserveButton(){
         if(inTransit){
             btnReserve.setText("Shuttle in Transit");
+            btnReserve.setEnabled(false);
+        }
+        else if(isFinished){
+            btnReserve.setText("Transit is done");
             btnReserve.setEnabled(false);
         }
         else if(currentHour > hour){
