@@ -243,10 +243,14 @@ public class FragmentShuttlesList extends Fragment {
                     for(DataSnapshot shuttle : locationsSnapshot.getChildren()){
                         final ModelLocation shuttleModel = new ModelLocation();
                         shuttleModel.setId(shuttle.getKey());
-                        shuttleModel.setStatus(shuttle.child("status").getValue().toString());
-                        shuttleModel.setLatitude((double)shuttle.child("latitude").getValue());
-                        shuttleModel.setLongitude((double)shuttle.child("longitude").getValue());
-                        shuttleModel.setDestination(shuttle.child("destination").getValue().toString());
+                        if(shuttle.child("status").exists())
+                            shuttleModel.setStatus(shuttle.child("status").getValue().toString());
+                        if(shuttle.child("latitude").exists())
+                            shuttleModel.setLatitude((double)shuttle.child("latitude").getValue());
+                        if(shuttle.child("longitude").exists())
+                            shuttleModel.setLongitude((double)shuttle.child("longitude").getValue());
+                        if(shuttle.child("destination").exists())
+                            shuttleModel.setDestination(shuttle.child("destination").getValue().toString());
                         shuttles.add(shuttleModel);
 
                         final String status = shuttle.child("status").getValue().toString();
