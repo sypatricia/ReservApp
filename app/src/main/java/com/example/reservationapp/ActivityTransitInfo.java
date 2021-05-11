@@ -233,14 +233,12 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
                                                 if(dataSnapshot.child("status").exists()){
                                                     inTransit = true;
-                                                    ShowToast("in transit");
                                                 }
                                                 else{
                                                     inTransit = false;
                                                 }
                                                 if(dataSnapshot.child("isFinished").exists()){
                                                     isFinished = true;
-                                                    ShowToast("transit is finished");
                                                 }
                                                 else{
                                                     isFinished = false;
