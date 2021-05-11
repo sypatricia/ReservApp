@@ -455,66 +455,31 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                             }
 
                                             removeStudentReservationListener();
-                                            studReservationListener = refStudent.child("reservations").addValueEventListener(new ValueEventListener() {
+                                            studReservationListener = refStudent.child("reservations").orderByValue().equalTo(hour).addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull final DataSnapshot reservationSnapshot) {
 
-                                                    refTransit.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            //String status = dataSnapshot.child("status").getValue().toString();
 
-                                                            if(dataSnapshot.child("status").exists()){
-                                                                //inTransit = true;
-                                                                updateInfo();
-                                                                //ShowToast("not in transit");
-                                                                return;
-                                                            }
-                                                            else{
-                                                                //checks if already has a reservation with same time
-                                                                for(DataSnapshot reservation : reservationSnapshot.getChildren()){
-                                                                    if(!reservation.exists()){
-                                                                        reserved = false;
-                                                                        reservedInOther = false;
-                                                                        updateInfo();
-                                                                        return;
-                                                                    }
-                                                                    else if(transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                                                        reserved = true;
-                                                                        updateInfo();
-                                                                        return;
-                                                                    }
-                                                                    else if(!transitId.equals(reservation.getKey()) && reservation.getValue().toString().equals(String.valueOf(hour))){
-                                                                        reservedInOther = true;
-                                                                        updateInfo();
-                                                                        return;
-                                                                    }
-                                                                    else{
-                                                                        reserved = false;
-                                                                        reservedInOther = false;
-                                                                        updateInfo();
-                                                                        return;
-                                                                    }
+                                                    if(reservationSnapshot.exists()){
+                                                        if(reservationSnapshot.hasChild(transitId)){
+                                                            reserved = true;
+                                                        }
+                                                        else{
+                                                            for(DataSnapshot reservation : reservationSnapshot.getChildren()){
+                                                                if(reservation.exists()){
+                                                                    reservedInOther = true;
                                                                 }
                                                             }
                                                         }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                        }
-                                                    });
+                                                        ShowToast(reservationSnapshot.getKey());
+                                                    }
+                                                    else{
+                                                        reserved = false;
+                                                        reservedInOther = false;
+                                                    }
 
 
                                                     updateInfo();
-
-                                                    //                if(!reserved){
-                                                    //
-                                                    //                    btnReserve.setEnabled(false);
-                                                    //                    btnReserve.setText("You are reserved in another transit");
-                                                    //                    //reserve student
-                                                    //                }
-                                                    //                else Toast.makeText(ActivityTransitInfo.this,"You already have a reservation for this time schedule", Toast.LENGTH_LONG).show();
                                                 }
 
                                                 @Override
