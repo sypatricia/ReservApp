@@ -471,7 +471,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                                                                 }
                                                             }
                                                         }
-                                                        ShowToast(reservationSnapshot.getKey());
                                                     }
                                                     else{
                                                         reserved = false;

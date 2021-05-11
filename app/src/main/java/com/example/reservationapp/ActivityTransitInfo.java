@@ -220,7 +220,6 @@ public class ActivityTransitInfo extends AppCompatActivity {
                                                     }
                                                 }
                                             }
-                                            ShowToast(reservationSnapshot.getKey());
                                         }
                                         else{
                                             reservedHere = false;
