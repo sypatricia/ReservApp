@@ -298,6 +298,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         else if(currentHour > hour){
             btnReserve.setText("Transit is done");
             btnReserve.setEnabled(false);
+            clearReservations();
         }
         else if(reservedDiff){
             btnReserve.setText("Reserved in another");
@@ -318,6 +319,50 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         }
 
+    }
+
+    void clearReservations(){
+        refTransit.child("reservations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    String time =  new DecimalFormat("0000").format(hour) ;
+                    String min = time.substring(time.length()-2);
+                    String hour = time.substring(0, time.length()-2);
+                    String format = hour + ":" + min;
+                    SimpleDateFormat f24hours = new SimpleDateFormat(
+                            "HH:mm"
+                    );
+                    final SimpleDateFormat f12hours = new SimpleDateFormat(
+                            "hh:mm aa"
+                    );
+
+
+
+                    for(DataSnapshot reserved : dataSnapshot.getChildren()){
+                        String studentId = reserved.getKey();
+                        reserved.getRef().removeValue();
+                        DatabaseReference refStudent = refRoot.child("Students").child(studentId);
+                        refStudent.child("reservations").child(transitId).removeValue();
+
+                        final Date date;
+                        try {
+                            date = f24hours.parse(format);
+                            final String time12hr = f12hours.format(date);
+                            String message = "Your reservation for "+time12hr+" has been cancelled. The shuttle did not depart according to the schedule.";
+                            refRoot.child("Notifications").child(studentId).setValue(message);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     void ShowToast(String message){ Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); }
