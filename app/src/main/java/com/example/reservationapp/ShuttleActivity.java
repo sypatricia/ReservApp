@@ -372,7 +372,8 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                             from.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    fromName = dataSnapshot.child("name").getValue().toString();
+                                    if(dataSnapshot.child("name").exists())
+                                        fromName = dataSnapshot.child("name").getValue().toString();
                                     updateInfo();
                                 }
 
