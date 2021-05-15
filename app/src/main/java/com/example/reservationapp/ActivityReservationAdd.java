@@ -168,7 +168,7 @@ public class ActivityReservationAdd extends AppCompatActivity {
                         time = Integer.parseInt(new DecimalFormat("00").format(scheduleArr[schedPos].getHour()) + new DecimalFormat("00").format(scheduleArr[schedPos].getMinute()));
                         reserved = false;
 
-                        ShowToast(time + "");
+                        //ShowToast(time + "");
 
                         for(DataSnapshot reservation : dataSnapshot.getChildren()){
                             if(reservation.getValue().toString().equals(time + ""))
@@ -242,7 +242,7 @@ public class ActivityReservationAdd extends AppCompatActivity {
 
                             for(DataSnapshot ds : dataSnapshot.getChildren()){
                                 final int count = (int)dataSnapshot.getChildrenCount();
-                                ShowToast(String.valueOf(count));
+                                //ShowToast(String.valueOf(count));
                                 final DataSnapshot transit = ds;
 
                                 refTransits.child(transit.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -256,7 +256,7 @@ public class ActivityReservationAdd extends AppCompatActivity {
                                                 int cap = Math.toIntExact((long)driver.child("capacity").getValue());
                                                 int res = Math.toIntExact(count);
 
-                                                if(transit.child(from).getValue().toString().equals("from") && transit.child(des).getValue().toString().equals("destination") && res < cap){
+                                                if(transit.child(from).getValue().toString().equals("from") && transit.child(des).getValue().toString().equals("destination") && res < cap && !transit.child("status").exists()){
 
                                                     String transitId = transit.getKey();
                                                     refStudent.child("reservations").child(transitId).setValue(time);

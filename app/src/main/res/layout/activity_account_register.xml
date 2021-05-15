@@ -50,7 +50,7 @@
         android:backgroundTint="@color/mclblue"
         android:fontFamily="@font/regular"
         android:hint="Student Number"
-        android:inputType="numberPassword"
+        android:inputType="number"
         android:maxLength="10"
         android:nextFocusForward="@+id/txtFirstName"
         android:singleLine="true"
