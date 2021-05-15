@@ -154,7 +154,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
 
     void removeReservationListener(){
         if(studReservationListeener != null) {
-            refStudent.child("reservations").removeEventListener(studReservationListeener);
+            refStudent.child("reservations").orderByValue().equalTo(hour).removeEventListener(studReservationListeener);
             studReservationListeener = null;
         }
     }
