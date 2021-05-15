@@ -310,19 +310,19 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
     void removeLocationListener(){
         if(locationListener != null){
-            refLocation.orderByValue().removeEventListener(locationListener);
+            refLocation.removeEventListener(locationListener);
             locationListener = null;
         }
     }
     void removeReservationListener(){
         if(reservationsListener != null){
-            refReservations.orderByValue().removeEventListener(reservationsListener);
+            refReservations.removeEventListener(reservationsListener);
             reservationsListener = null;
         }
     }
     void removeStudentReservationListener(){
         if(studReservationListener != null){
-            refStudent.child("reservations").removeEventListener(studReservationListener);
+            refStudent.child("reservations").orderByValue().equalTo(hour).removeEventListener(studReservationListener);
             studReservationListener = null;
         }
     }
@@ -344,6 +344,10 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
                         final DatabaseReference from = refRoot.child("Stations/"+ fromId);
                         transitId = dataSnapshot.child("transit").getValue().toString();
                         refTransit = refRoot.child("Transits").child(transitId);
+                        if(dataSnapshot.child("latitude").exists())
+                            locationLatitude = (double)dataSnapshot.child("latitude").getValue();
+                        if(dataSnapshot.child("longitude").exists())
+                            locationLongitude = (double)dataSnapshot.child("longitude").getValue();
 
                         if(transitId.equals("none")){
                             fromName = "";
