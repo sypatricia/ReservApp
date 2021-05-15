@@ -156,43 +156,45 @@ public class FragmentSchedules extends Fragment {
                         ScheduleModel model = new ScheduleModel();
                         model.setId(schedule.getKey());
 
-                        if(schedule.child("hour").exists())
-                            model.setHour(Integer.valueOf(schedule.child("hour").getValue().toString()));
-                        else{
-                            model.setHour(0);
-                        }
-                        if(schedule.child("time").exists())
-                            model.setMinute(Integer.valueOf(schedule.child("minute").getValue().toString()));
-                        else{
-                            model.setMinute(0);
-                        }
-                        schedules.add(model);
+                        if(schedule.hasChild("transits")){
+                            if(schedule.child("hour").exists())
+                                model.setHour(Integer.valueOf(schedule.child("hour").getValue().toString()));
+                            else{
+                                model.setHour(0);
+                            }
+                            if(schedule.child("time").exists())
+                                model.setMinute(Integer.valueOf(schedule.child("minute").getValue().toString()));
+                            else{
+                                model.setMinute(0);
+                            }
+                            schedules.add(model);
 
-                        String time = model.getHour() + ":" +model.getMinute();
+                            String time = model.getHour() + ":" +model.getMinute();
 
-                        SimpleDateFormat f24hours = new SimpleDateFormat(
-                                "HH:mm"
-                        );
-
-                        final Date date;
-                        try {
-                            date = f24hours.parse(time);
-
-                            final SimpleDateFormat f12hours = new SimpleDateFormat(
-                                    "hh:mm aa"
+                            SimpleDateFormat f24hours = new SimpleDateFormat(
+                                    "HH:mm"
                             );
 
-                            final String time12hr = f12hours.format(date);
+                            final Date date;
+                            try {
+                                date = f24hours.parse(time);
 
-                            time = time12hr;
+                                final SimpleDateFormat f12hours = new SimpleDateFormat(
+                                        "hh:mm aa"
+                                );
 
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                                final String time12hr = f12hours.format(date);
+
+                                time = time12hr;
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            listitems.add(new ModelScheduleListItem(time));
+                            AdapterScheduleList adapterScheduleList = new AdapterScheduleList(rootView.getContext(), R.layout.list_item_schedule, listitems);
+                            lstSchedules.setAdapter(adapterScheduleList);
                         }
-
-                        listitems.add(new ModelScheduleListItem(time));
-                        AdapterScheduleList adapterScheduleList = new AdapterScheduleList(rootView.getContext(), R.layout.list_item_schedule, listitems);
-                        lstSchedules.setAdapter(adapterScheduleList);
                     }
                 }
                 else{
