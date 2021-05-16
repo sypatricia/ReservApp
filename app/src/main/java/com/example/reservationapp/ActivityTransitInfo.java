@@ -1,8 +1,10 @@
 package com.example.reservationapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,14 +34,16 @@ public class ActivityTransitInfo extends AppCompatActivity {
     int capCount, resCount, hour, currentHour;
     boolean reservedHere = false, reservedDiff = false, inTransit = false, isFinished = false;
 
-    DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent;
+    DatabaseReference refRoot, refTransit, refDriver, refSchedule, refStations, refStudent, refConfirmations;
     ValueEventListener transitListener = null;
     ValueEventListener studReservationListeener = null;
+    ValueEventListener confirmationsListener = null;
 
     @Override
     public void onResume() {
         super.onResume();
         getInfo();
+        startConfirmationListener();
     }
 
     @Override
@@ -47,6 +51,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         super.onPause();
         removeTransitListener();
         removeReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -54,6 +59,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         super.onStop();
         removeTransitListener();
         removeReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -61,6 +67,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         super.onDestroy();
         removeTransitListener();
         removeReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -90,8 +97,10 @@ public class ActivityTransitInfo extends AppCompatActivity {
         refDriver = refRoot.child("Drivers/" + driverId);
         refSchedule = refRoot.child("Schedules/" + schedId);
         refStations = refRoot.child("Stations");
+        refConfirmations = refRoot.child("Confirmations/" + studentId);
 
         getInfo();
+        startConfirmationListener();
         btnReserve.setEnabled(false);
 
         refStations.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -144,6 +153,49 @@ public class ActivityTransitInfo extends AppCompatActivity {
             }
         });
 
+    }
+
+    void stopConfirmationListener(){
+        if(confirmationsListener != null){
+            refConfirmations.removeEventListener(confirmationsListener);
+            confirmationsListener = null;
+        }
+    }
+
+    void startConfirmationListener(){
+        stopConfirmationListener();
+        confirmationsListener = refConfirmations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("status").exists()){
+                    if(dataSnapshot.child("status").getValue().toString().equals("Waiting")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityTransitInfo.this);
+                        builder.setTitle("Arrival Confirmation")
+                                .setMessage("The driver is attempting to finish this transit. Do you confirm the shuttle has arrived at its destination?")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Denied");
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Confirmed");
+                                    }
+                                }).setCancelable(false);
+                        AlertDialog alert = builder.create();
+                        alert.setCanceledOnTouchOutside(false);
+                        alert.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     void removeTransitListener(){

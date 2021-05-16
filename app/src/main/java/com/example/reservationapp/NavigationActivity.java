@@ -1,6 +1,7 @@
 package com.example.reservationapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -11,6 +12,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -24,15 +26,30 @@ import com.google.firebase.database.ValueEventListener;
 public class NavigationActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    DatabaseReference refRoot, refNotifications;
+    DatabaseReference refRoot, refNotifications, refConfirmations;
     ValueEventListener notificationsListener = null;
+    ValueEventListener confirmationsListener = null;
     String studentId;
     private NotificationManagerCompat managerCompat;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startConfirmationListener();
+        startNotificationListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopConfirmationListener();
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopNotificationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -45,12 +62,10 @@ public class NavigationActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavController navController = Navigation.findNavController(this,  R.id.fragment);
 
-//        AppBarConfiguration configuration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-//        NavigationUI.setupActionBarWithNavController(this, navController, configuration);
-
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         refRoot = FirebaseDatabase.getInstance().getReference();
         refNotifications = refRoot.child("Notifications/" + studentId);
+        refConfirmations = refRoot.child("Confirmations/" + studentId);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel channel = new NotificationChannel("reservation", "reservation", NotificationManager.IMPORTANCE_HIGH);
@@ -59,6 +74,7 @@ public class NavigationActivity extends AppCompatActivity {
         }
 
         startNotificationListener();
+        startConfirmationListener();
 
     }
 
@@ -91,6 +107,49 @@ public class NavigationActivity extends AppCompatActivity {
                     DatabaseReference notification = dataSnapshot.getRef();
                     notification.removeValue();
 
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    void stopConfirmationListener(){
+        if(confirmationsListener != null){
+            refConfirmations.removeEventListener(confirmationsListener);
+            confirmationsListener = null;
+        }
+    }
+
+    void startConfirmationListener(){
+        stopConfirmationListener();
+        confirmationsListener = refConfirmations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("status").exists()){
+                    if(dataSnapshot.child("status").getValue().toString().equals("Waiting")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(NavigationActivity.this);
+                        builder.setTitle("Arrival Confirmation")
+                                .setMessage("The driver is attempting to finish this transit. Do you confirm the shuttle has arrived at its destination?")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Denied");
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Confirmed");
+                                    }
+                                }).setCancelable(false);
+                        AlertDialog alert = builder.create();
+                        alert.setCanceledOnTouchOutside(false);
+                        alert.show();
+                    }
                 }
             }
 

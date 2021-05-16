@@ -36,6 +36,8 @@ public class AccountLoginActivity extends AppCompatActivity {
         txtPassword = findViewById(R.id.txtPassword);
         lblRegister = findViewById(R.id.lblRegister);
 
+        ShowToast("e");
+
         lblRegister.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

@@ -1,10 +1,12 @@
 package com.example.reservationapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -83,10 +85,12 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     DatabaseReference refStudent;
     DatabaseReference refTransit;
     DatabaseReference refSchedule;
+    DatabaseReference refConfirmations;
     DatabaseReference refReservations;
     ValueEventListener locationListener = null;
     ValueEventListener reservationsListener = null;
     ValueEventListener studReservationListener = null;
+    ValueEventListener confirmationsListener = null;
     private List<Polyline> polylines = null;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -97,6 +101,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     protected void onResume() {
         super.onResume();
         startListening();
+        startConfirmationListener();
     }
 
     @Override
@@ -105,6 +110,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         removeLocationListener();
         removeReservationListener();
         removeStudentReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -113,6 +119,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         removeLocationListener();
         removeReservationListener();
         removeStudentReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -121,6 +128,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         removeLocationListener();
         removeReservationListener();
         removeStudentReservationListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -160,8 +168,10 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         refDriver = refRoot.child("Drivers/" + id);
         //refReservations = refRoot.child("Reservations/" + id);
         refStudent = refRoot.child("Students/" + studentId);
+        refConfirmations = refRoot.child("Confirmations/" + studentId);
 
         startListening();
+        startConfirmationListener();
 
         refDriver.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -297,16 +307,6 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         catch (Exception e){
             address = "Unable to get street address";
         }
-
-//        if(reserved){
-//            refReservations.child(studentId).child("latitude").setValue(latitude);
-//            refReservations.child(studentId).child("longitude").setValue(longitude);
-//            refReservations.child(studentId).child("accuracy").setValue(accuracy);
-//            refReservations.child(studentId).child("altitude").setValue(altitude);
-//            refReservations.child(studentId).child("speed").setValue(speed);
-//            refReservations.child(studentId).child("address").setValue(address);
-//        }
-
     }
 
 
@@ -327,6 +327,49 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             refStudent.child("reservations").orderByValue().equalTo(hour).removeEventListener(studReservationListener);
             studReservationListener = null;
         }
+    }
+
+    void stopConfirmationListener(){
+        if(confirmationsListener != null){
+            refConfirmations.removeEventListener(confirmationsListener);
+            confirmationsListener = null;
+        }
+    }
+
+    void startConfirmationListener(){
+        stopConfirmationListener();
+        confirmationsListener = refConfirmations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("status").exists()){
+                    if(dataSnapshot.child("status").getValue().toString().equals("Waiting")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ShuttleActivity.this);
+                        builder.setTitle("Arrival Confirmation")
+                                .setMessage("The driver is attempting to finish this transit. Do you confirm the shuttle has arrived at its destination?")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Denied");
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Confirmed");
+                                    }
+                                }).setCancelable(false);
+                        AlertDialog alert = builder.create();
+                        alert.setCanceledOnTouchOutside(false);
+                        alert.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void startListening(){

@@ -1,8 +1,10 @@
 package com.example.reservationapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -36,8 +38,9 @@ public class ActivityTransitList extends AppCompatActivity {
     String studentId, schedId;
     int count = 0, counter = 0;
 
-    DatabaseReference refRoot, refTransits, refSchedule, refDesinations, refDriver;
+    DatabaseReference refRoot, refTransits, refSchedule, refDesinations, refDriver, refConfirmations;
     ValueEventListener transitListener = null;
+    ValueEventListener confirmationsListener = null;
 
     FirebaseListOptions<ScheduleModel> options;
 
@@ -47,24 +50,28 @@ public class ActivityTransitList extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         populateList();
+        startConfirmationListener();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         removeTransitListener();
+        stopConfirmationListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         removeTransitListener();
+        stopConfirmationListener();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         removeTransitListener();
+        stopConfirmationListener();
     }
 
     @Override
@@ -84,8 +91,10 @@ public class ActivityTransitList extends AppCompatActivity {
         refTransits = refRoot.child("Transits");
         refSchedule = refRoot.child("Schedules/" + schedId);
         refDesinations = refRoot.child("Stations");
+        refConfirmations = refRoot.child("Confirmations/" + studentId);
 
         populateList();
+        startConfirmationListener();
 
         refSchedule.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,6 +141,49 @@ public class ActivityTransitList extends AppCompatActivity {
             }
         });
 
+    }
+
+    void stopConfirmationListener(){
+        if(confirmationsListener != null){
+            refConfirmations.removeEventListener(confirmationsListener);
+            confirmationsListener = null;
+        }
+    }
+
+    void startConfirmationListener(){
+        stopConfirmationListener();
+        confirmationsListener = refConfirmations.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("status").exists()){
+                    if(dataSnapshot.child("status").getValue().toString().equals("Waiting")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ActivityTransitList.this);
+                        builder.setTitle("Arrival Confirmation")
+                                .setMessage("The driver is attempting to finish this transit. Do you confirm the shuttle has arrived at its destination?")
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Denied");
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        refConfirmations.child("status").setValue("Confirmed");
+                                    }
+                                }).setCancelable(false);
+                        AlertDialog alert = builder.create();
+                        alert.setCanceledOnTouchOutside(false);
+                        alert.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     void removeTransitListener(){
