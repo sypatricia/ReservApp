@@ -34,6 +34,15 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/txtPlateNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:fontFamily="@font/regular"
+                    android:text="Plate Number"
+                    android:textSize="30dp" />
+
+                <TextView
                     android:id="@+id/txtDriverName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -41,7 +50,7 @@
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/regular"
                     android:text="Driver"
-                    android:textSize="30dp" />
+                    android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/txtStatus"

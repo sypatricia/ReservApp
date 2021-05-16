@@ -61,7 +61,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     public static final int FASTEST_UPDATE_INTERVAL = 5;
     private static final int PEMISSIONS_FINE_LOCATION = 99;
 
-    TextView txtDriverName, txtStatus, txtDestination, txtCapacity, txtReserved, txtFrom, txtSchedule, txtEstimated;
+    TextView txtDriverName, txtPlateNum, txtStatus, txtDestination, txtCapacity, txtReserved, txtFrom, txtSchedule, txtEstimated;
     Button btnReserve;
 
     GoogleMap gMap;
@@ -70,7 +70,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
     String studentId;
     boolean reserved = false;
     boolean reservedInOther = false;
-    String id, driverName, status, destinationId, destinationName = "", transitId, fromId, fromName, schedule, scheduleId, estimated = "";
+    String id, driverName, platenum, status, destinationId, destinationName = "", transitId, fromId, fromName, schedule, scheduleId, estimated = "";
     double locationLatitude, locationLongitude, destinationLatitude, destinationLongitude;
     int reservations = 0, capacity = 0, hour = 0, currentHour;
 
@@ -140,6 +140,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
         txtFrom = findViewById(R.id.txtFrom);
         txtSchedule = findViewById(R.id.txtSchedule);
         txtEstimated = findViewById(R.id.txtEstimated);
+        txtPlateNum = findViewById(R.id.txtPlateNum);
 
         studentId = getIntent().getStringExtra("studentId");
 
@@ -166,6 +167,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 driverName = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+                platenum = dataSnapshot.child("plateNumber").getValue().toString();
                 capacity = Integer.valueOf(dataSnapshot.child("capacity").getValue().toString());
                 updateInfo();
             }
@@ -530,6 +532,7 @@ public class ShuttleActivity extends AppCompatActivity implements OnMapReadyCall
 
     public void updateInfo(){
         txtDriverName.setText(driverName);
+        txtPlateNum.setText(platenum);
         txtStatus.setText("Status: " + status);
         txtCapacity.setText(reservations + "/" + capacity);
         txtDestination.setText(destinationName);

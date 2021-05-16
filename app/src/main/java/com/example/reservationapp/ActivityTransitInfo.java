@@ -24,7 +24,7 @@ import java.util.Date;
 
 public class ActivityTransitInfo extends AppCompatActivity {
 
-    TextView txtName, txtSchedule, txtFrom, txtTo, txtReserved;
+    TextView txtName, txtPlateNum, txtSchedule, txtFrom, txtTo, txtReserved;
     Button btnReserve;
     ImageView btnBack;
 
@@ -69,6 +69,7 @@ public class ActivityTransitInfo extends AppCompatActivity {
         setContentView(R.layout.activity_transit_info);
 
         txtName = findViewById(R.id.txtName);
+        txtPlateNum = findViewById(R.id.txtPlateNum);
         txtSchedule = findViewById(R.id.txtSchedule);
         txtFrom = findViewById(R.id.txtFrom);
         txtTo = findViewById(R.id.txtTo);
@@ -171,8 +172,10 @@ public class ActivityTransitInfo extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String name = dataSnapshot.child("firstName").getValue() + " " + dataSnapshot.child("lastName").getValue();
+                        String plateNum = dataSnapshot.child("plateNumber").getValue().toString();
                         capCount = Integer.parseInt(dataSnapshot.child("capacity").getValue().toString());
 
+                        txtPlateNum.setText(plateNum);
                         txtName.setText(name);
                         UpdateResCap();
 

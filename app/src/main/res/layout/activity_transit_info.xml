@@ -24,7 +24,7 @@
         app:srcCompat="@drawable/back_btn" />
 
     <TextView
-        android:id="@+id/txtName"
+        android:id="@+id/txtPlateNum"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
@@ -32,6 +32,14 @@
         android:text=""
         android:textSize="24dp"
         android:fontFamily="@font/regular"/>
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:fontFamily="@font/regular"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"/>
 
     <TextView
         android:layout_width="wrap_content"
